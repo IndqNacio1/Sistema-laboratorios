@@ -1,0 +1,16 @@
+{
+  "name": "sistema-laboratorios",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sistema de escritorio para la gestion integral de un laboratorio medico.",
+  "workspaces": [
+    "apps/frontend",
+    "apps/backend"
+  ],
+  "scripts": {
+    "dev": "echo \"Configurar scripts de desarrollo por aplicacion\"",
+    "dev:frontend": "npm --workspace apps/frontend run dev",
+    "dev:backend": "npm --workspace apps/backend run dev"
+  }
+}
+

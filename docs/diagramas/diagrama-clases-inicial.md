@@ -1,5 +1,4 @@
 # Diagrama inicial de clases
-
 Este diagrama representa una primera version de las entidades principales del sistema de laboratorios. Puede ajustarse conforme se definan con mas detalle los modulos y reglas de negocio.
 
 ```mermaid

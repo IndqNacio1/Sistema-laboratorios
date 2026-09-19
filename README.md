@@ -28,3 +28,9 @@ npm run dev:backend
 - Inventario
 - Laboratorio / servicios
 - Reportes y dashboard
+
+## Documentacion
+
+- [Diagrama inicial de clases](docs/diagramas/diagrama-clases-inicial.md)
+- [Procesos principales iniciales](docs/procesos/procesos-principales-iniciales.md)
+- [Diagramas de procesos](docs/diagramas/procesos/README.md)

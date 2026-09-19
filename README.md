@@ -3,12 +3,10 @@ Sistema de escritorio para la gestión integral de un laboratorio médico, con m
 
 ## Estructura inicial
 
-```text
 apps/
   frontend/   Aplicacion de escritorio con React, Tailwind y MUI.
   backend/    API con Node.js y conexion a bases de datos.
 docs/         Documentacion, planeacion y analisis del proyecto.
-```
 
 ## Comandos iniciales
 

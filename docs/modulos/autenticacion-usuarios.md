@@ -54,3 +54,60 @@ Permitir que solo los usuarios autorizados puedan acceder a la plataforma, limit
 - Un usuario inactivo no puede iniciar sesion.
 - El correo debe ser unico dentro del sistema.
 
+## Roles iniciales
+
+### Administrador
+
+Usuario con acceso general al sistema.
+
+Permisos iniciales:
+
+- Consultar informacion de todas las sucursales.
+- Crear, editar, consultar y dar de baja usuarios.
+- Cambiar usuarios de sucursal.
+- Consultar pacientes, estudios, inventario, finanzas y reportes.
+- Acceder a configuraciones generales del sistema.
+
+### Supervisor
+
+Usuario encargado de revisar la operacion de una sucursal.
+
+Permisos iniciales:
+
+- Consultar informacion de su sucursal.
+- Consultar usuarios de su sucursal.
+- Consultar pacientes y estudios.
+- Revisar inventario y movimientos.
+- Consultar reportes operativos de su sucursal.
+
+### Operativo
+
+Usuario encargado de registrar o dar seguimiento a estudios.
+
+Permisos iniciales:
+
+- Consultar pacientes.
+- Registrar estudios.
+- Capturar o consultar resultados.
+- Revisar disponibilidad de insumos relacionados con estudios.
+
+### Recepcion
+
+Usuario encargado de la atencion inicial del paciente y cobros.
+
+Permisos iniciales:
+
+- Registrar pacientes.
+- Consultar pacientes.
+- Registrar cobros.
+- Consultar cuentas por cobrar.
+- Registrar servicios solicitados por el paciente.
+
+## Restricciones iniciales por rol
+
+- Solo el administrador puede administrar usuarios.
+- Solo el administrador puede consultar todas las sucursales.
+- Supervisor, operativo y recepcion solo trabajan con su sucursal asignada.
+- Operativo no debe modificar informacion financiera.
+- Recepcion no debe modificar resultados de estudios.
+- Los usuarios inactivos no aparecen como opcion para nuevas tareas.

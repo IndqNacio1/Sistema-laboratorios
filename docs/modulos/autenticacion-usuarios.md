@@ -111,3 +111,56 @@ Permisos iniciales:
 - Operativo no debe modificar informacion financiera.
 - Recepcion no debe modificar resultados de estudios.
 - Los usuarios inactivos no aparecen como opcion para nuevas tareas.
+
+## Estructura inicial del usuario
+
+Campos propuestos:
+
+- `id`: identificador unico del usuario.
+- `nombre`: nombre completo.
+- `correo`: correo utilizado para iniciar sesion.
+- `contrasena`: contrasena protegida.
+- `rol`: tipo de usuario dentro del sistema.
+- `sucursalId`: sucursal asignada.
+- `estatus`: activo o inactivo.
+- `fechaRegistro`: fecha de alta del usuario.
+- `fechaActualizacion`: fecha de ultima modificacion.
+
+## Validaciones para alta de usuario
+
+- Nombre obligatorio.
+- Correo obligatorio.
+- Correo con formato valido.
+- Correo unico.
+- Contrasena obligatoria.
+- Rol obligatorio.
+- Rol valido dentro del sistema.
+- Sucursal obligatoria.
+- Sucursal existente y activa.
+
+## Validaciones para edicion de usuario
+
+- No permitir correos duplicados.
+- No permitir asignar roles inexistentes.
+- No permitir asignar usuarios a sucursales inactivas.
+- No permitir que un usuario cambie su propia sucursal.
+- Registrar fecha de actualizacion.
+
+## Baja logica de usuario
+
+La baja de usuario no elimina el registro de la base de datos. El sistema solo cambia su estatus a inactivo.
+
+Efectos de la baja logica:
+
+- El usuario no puede iniciar sesion.
+- El usuario no aparece como opcion para asignaciones futuras.
+- El historial relacionado con el usuario se conserva.
+- El administrador puede consultar el registro si es necesario.
+
+## Relacion con sucursales
+
+- Una sucursal puede tener varios usuarios.
+- Un usuario solo puede pertenecer a una sucursal.
+- La sucursal asignada define el alcance operativo del usuario.
+- El administrador puede consultar usuarios de todas las sucursales.
+- Los demas roles consultan informacion de su sucursal asignada.

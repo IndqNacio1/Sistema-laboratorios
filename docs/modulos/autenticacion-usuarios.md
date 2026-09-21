@@ -164,3 +164,14 @@ Efectos de la baja logica:
 - La sucursal asignada define el alcance operativo del usuario.
 - El administrador puede consultar usuarios de todas las sucursales.
 - Los demas roles consultan informacion de su sucursal asignada.
+
+## Pendientes de implementacion
+
+- Definir el mecanismo final de recuperacion de cuenta.
+- Implementar cifrado de contrasenas.
+- Implementar generacion de sesion o token.
+- Crear modelo de usuario en backend.
+- Crear modelo de sucursal en backend.
+- Crear endpoints para alta, consulta, edicion y baja logica de usuarios.
+- Conectar la pantalla de login con el servicio de autenticacion.
+- Definir pruebas para validaciones principales.

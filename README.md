@@ -30,5 +30,6 @@ npm run dev:backend
 ## Documentacion
 
 - [Diagrama inicial de clases](docs/diagramas/diagrama-clases-inicial.md)
+- [Modulo de autenticacion y usuarios](docs/modulos/autenticacion-usuarios.md)
 - [Procesos principales iniciales](docs/procesos/procesos-principales-iniciales.md)
 - [Diagramas de procesos](docs/diagramas/procesos/README.md)

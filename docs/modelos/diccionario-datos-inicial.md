@@ -102,6 +102,53 @@ Entidad que representa a la persona que recibe servicios o estudios del laborato
 - Activo
 - Inactivo
 
+## Relaciones iniciales
+
+### Sucursal y Usuario
+
+- Una sucursal puede tener varios usuarios.
+- Un usuario pertenece a una sola sucursal.
+- La relacion se representa con `Usuario.sucursalId`.
+- El administrador puede consultar usuarios de todas las sucursales.
+- Los roles supervisor, operativo y recepcion consultan usuarios dentro de su sucursal asignada.
+
+### Sucursal y Paciente
+
+- Una sucursal puede tener varios pacientes.
+- Un paciente pertenece a una sucursal.
+- La relacion se representa con `Paciente.sucursalId`.
+- La sucursal permite identificar donde se registro o atiende al paciente.
+
+### Usuario y Paciente
+
+- El usuario de recepcion puede registrar pacientes.
+- El supervisor y administrador pueden consultar pacientes.
+- El usuario no se relaciona directamente con paciente en el diccionario inicial, pero sus acciones deberan conservarse en auditoria o historial cuando se implemente.
+
+### Paciente y Estudio
+
+- Un paciente puede tener varios estudios.
+- Cada estudio debe pertenecer a un paciente.
+- Esta relacion se detallara en el diccionario del modulo de estudios.
+
+## Dependencias entre modulos
+
+| Modulo | Depende de | Motivo |
+| --- | --- | --- |
+| Usuarios | Sucursales | Cada usuario debe estar asignado a una sucursal. |
+| Pacientes | Sucursales | Cada paciente debe registrarse en una sucursal. |
+| Estudios | Pacientes | Cada estudio debe asociarse a un paciente. |
+| Estudios | Usuarios | Se debe conocer que usuario registro o atendio el estudio. |
+| Cobros | Estudios | El cobro se realiza sobre un estudio o servicio registrado. |
+
+## Prioridad inicial
+
+1. Definir sucursales.
+2. Definir usuarios y roles.
+3. Definir pacientes.
+4. Definir estudios.
+5. Definir cobros e inventario relacionado.
+
 ## Pendientes
 
 - Definir si `edad` se almacenara o se calculara desde `fechaNacimiento`.

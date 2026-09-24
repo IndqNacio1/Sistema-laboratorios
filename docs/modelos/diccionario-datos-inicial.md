@@ -10,8 +10,9 @@ Esta version cubre las entidades iniciales de la Fase 1:
 - Sucursal
 - Paciente
 - Estudio
+- Servicio
 
-Las entidades `Servicio`, `Pago`, `Producto` y movimientos se documentaran en fases posteriores.
+Las entidades `Pago`, `Producto` y movimientos se documentaran en fases posteriores.
 
 ## Usuario
 
@@ -143,6 +144,33 @@ Entidad que representa un estudio realizado o solicitado para un paciente.
 - En proceso
 - Completado
 - Cancelado
+
+## Servicio
+
+Entidad que representa el catalogo de servicios o estudios que ofrece el laboratorio.
+
+| Campo | Tipo inicial | Obligatorio | Descripcion |
+| --- | --- | --- | --- |
+| id | UUID | Si | Identificador unico del servicio. |
+| nombre | String | Si | Nombre del servicio o estudio. |
+| descripcion | String | No | Descripcion general del servicio. |
+| costo | Number | Si | Precio base del servicio. |
+| estatus | Enum | Si | Estado del servicio dentro del catalogo. |
+| createdAt | Timestamp | Si | Fecha de creacion del registro. |
+| updatedAt | Timestamp | Si | Fecha de ultima actualizacion del registro. |
+
+### Reglas iniciales
+
+- El nombre del servicio debe ser obligatorio.
+- El costo debe ser mayor o igual a cero.
+- Un servicio inactivo no debe estar disponible para nuevos estudios.
+- Un servicio puede requerir insumos del inventario.
+- Los materiales requeridos se documentaran con una entidad de relacion en una fase posterior.
+
+### Estatus considerados
+
+- Activo
+- Inactivo
 
 ## Relaciones iniciales
 

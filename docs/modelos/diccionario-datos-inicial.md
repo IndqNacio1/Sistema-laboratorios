@@ -2,6 +2,16 @@
 
 Este documento define los campos iniciales de las entidades principales del sistema. La informacion servira como base para preparar el diagrama de base de datos y los modelos del backend.
 
+## Alcance de esta version
+
+Esta version cubre las entidades iniciales de la Fase 1:
+
+- Usuario
+- Sucursal
+- Paciente
+
+Las entidades `Estudio`, `Servicio`, `Pago`, `Producto` y movimientos se documentaran en fases posteriores.
+
 ## Usuario
 
 Entidad que representa a una persona con acceso a la plataforma.

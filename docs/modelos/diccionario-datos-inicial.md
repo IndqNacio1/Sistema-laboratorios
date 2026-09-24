@@ -1,0 +1,168 @@
+# Diccionario de datos inicial
+
+Este documento define los campos iniciales de las entidades principales del sistema. La informacion servira como base para preparar el diagrama de base de datos y los modelos del backend.
+
+## Alcance de esta version
+
+Esta version cubre las entidades iniciales de la Fase 1:
+
+- Usuario
+- Sucursal
+- Paciente
+
+Las entidades `Estudio`, `Servicio`, `Pago`, `Producto` y movimientos se documentaran en fases posteriores.
+
+## Usuario
+
+Entidad que representa a una persona con acceso a la plataforma.
+
+| Campo | Tipo inicial | Obligatorio | Descripcion |
+| --- | --- | --- | --- |
+| id | UUID | Si | Identificador unico del usuario. |
+| sucursalId | UUID | Si | Identificador de la sucursal asignada. |
+| nombres | String | Si | Nombre o nombres del usuario. |
+| apellidos | String | Si | Apellidos del usuario. |
+| correo | String | Si | Correo utilizado para iniciar sesion. |
+| contrasena | String | Si | Contrasena protegida del usuario. |
+| rol | Enum | Si | Tipo de usuario dentro del sistema. |
+| fechaNacimiento | Date | No | Fecha de nacimiento del usuario. |
+| edad | Int | No | Edad del usuario, pendiente de definir si se calcula o se almacena. |
+| genero | Enum | No | Genero del usuario. |
+| estatus | Enum | Si | Estado del usuario dentro del sistema. |
+| createdAt | Timestamp | Si | Fecha de creacion del registro. |
+| updatedAt | Timestamp | Si | Fecha de ultima actualizacion del registro. |
+
+### Reglas iniciales
+
+- El correo debe ser unico.
+- El usuario debe pertenecer a una sola sucursal.
+- El rol debe pertenecer al catalogo permitido.
+- El estatus define si el usuario puede iniciar sesion.
+- La baja del usuario debe realizarse mediante cambio de estatus.
+
+### Roles considerados
+
+- Administrador
+- Supervisor
+- Operativo
+- Recepcion
+
+### Estatus considerados
+
+- Activo
+- Inactivo
+
+## Sucursal
+
+Entidad que representa una sede o unidad del laboratorio.
+
+| Campo | Tipo inicial | Obligatorio | Descripcion |
+| --- | --- | --- | --- |
+| id | UUID | Si | Identificador unico de la sucursal. |
+| nombre | String | Si | Nombre de la sucursal. |
+| direccion | String | Si | Ubicacion fisica de la sucursal. |
+| telefono | String | No | Telefono de contacto de la sucursal. |
+| estatus | Enum | Si | Estado de la sucursal dentro del sistema. |
+| createdAt | Timestamp | Si | Fecha de creacion del registro. |
+| updatedAt | Timestamp | Si | Fecha de ultima actualizacion del registro. |
+| expiresAt | Timestamp | No | Fecha de expiracion o desactivacion programada, si aplica. |
+
+### Reglas iniciales
+
+- Una sucursal puede tener varios usuarios.
+- Una sucursal puede tener varios pacientes.
+- Solo el administrador puede consultar todas las sucursales.
+- Los usuarios operativos solo trabajan con la sucursal asignada.
+- Una sucursal inactiva no debe estar disponible para nuevas asignaciones.
+
+### Estatus considerados
+
+- Activa
+- Inactiva
+
+## Paciente
+
+Entidad que representa a la persona que recibe servicios o estudios del laboratorio.
+
+| Campo | Tipo inicial | Obligatorio | Descripcion |
+| --- | --- | --- | --- |
+| id | UUID | Si | Identificador unico del paciente. |
+| sucursalId | UUID | Si | Identificador de la sucursal donde se registro el paciente. |
+| nombres | String | Si | Nombre o nombres del paciente. |
+| apellidos | String | Si | Apellidos del paciente. |
+| telefono | String | No | Telefono de contacto del paciente. |
+| correo | String | No | Correo de contacto del paciente. |
+| fechaNacimiento | Date | No | Fecha de nacimiento del paciente. |
+| edad | Int | No | Edad del paciente, pendiente de definir si se calcula o se almacena. |
+| genero | Enum | No | Genero del paciente. |
+| estatus | Enum | Si | Estado del paciente dentro del sistema. |
+| createdAt | Timestamp | Si | Fecha de creacion del registro. |
+| updatedAt | Timestamp | Si | Fecha de ultima actualizacion del registro. |
+
+### Reglas iniciales
+
+- El paciente debe pertenecer a una sucursal.
+- El paciente puede tener varios estudios asociados.
+- El historial del paciente se conserva aunque el paciente quede inactivo.
+- La baja del paciente debe manejarse mediante cambio de estatus.
+- Se debe evitar duplicar pacientes cuando sea posible.
+
+### Estatus considerados
+
+- Activo
+- Inactivo
+
+## Relaciones iniciales
+
+### Sucursal y Usuario
+
+- Una sucursal puede tener varios usuarios.
+- Un usuario pertenece a una sola sucursal.
+- La relacion se representa con `Usuario.sucursalId`.
+- El administrador puede consultar usuarios de todas las sucursales.
+- Los roles supervisor, operativo y recepcion consultan usuarios dentro de su sucursal asignada.
+
+### Sucursal y Paciente
+
+- Una sucursal puede tener varios pacientes.
+- Un paciente pertenece a una sucursal.
+- La relacion se representa con `Paciente.sucursalId`.
+- La sucursal permite identificar donde se registro o atiende al paciente.
+
+### Usuario y Paciente
+
+- El usuario de recepcion puede registrar pacientes.
+- El supervisor y administrador pueden consultar pacientes.
+- El usuario no se relaciona directamente con paciente en el diccionario inicial, pero sus acciones deberan conservarse en auditoria o historial cuando se implemente.
+
+### Paciente y Estudio
+
+- Un paciente puede tener varios estudios.
+- Cada estudio debe pertenecer a un paciente.
+- Esta relacion se detallara en el diccionario del modulo de estudios.
+
+## Dependencias entre modulos
+
+| Modulo | Depende de | Motivo |
+| --- | --- | --- |
+| Usuarios | Sucursales | Cada usuario debe estar asignado a una sucursal. |
+| Pacientes | Sucursales | Cada paciente debe registrarse en una sucursal. |
+| Estudios | Pacientes | Cada estudio debe asociarse a un paciente. |
+| Estudios | Usuarios | Se debe conocer que usuario registro o atendio el estudio. |
+| Cobros | Estudios | El cobro se realiza sobre un estudio o servicio registrado. |
+
+## Prioridad inicial
+
+1. Definir sucursales.
+2. Definir usuarios y roles.
+3. Definir pacientes.
+4. Definir estudios.
+5. Definir cobros e inventario relacionado.
+
+## Pendientes
+
+- Definir si `edad` se almacenara o se calculara desde `fechaNacimiento`.
+- Definir catalogo final para `genero`.
+- Definir reglas de contrasena.
+- Definir si se agregaran campos de recuperacion de cuenta.
+- Definir reglas para detectar pacientes duplicados.

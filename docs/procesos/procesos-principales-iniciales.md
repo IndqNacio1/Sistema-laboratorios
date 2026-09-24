@@ -2,6 +2,15 @@
 
 Este documento describe los primeros procesos del sistema de laboratorios. La finalidad es definir los flujos base antes de iniciar el desarrollo completo de los modulos.
 
+## Diagramas relacionados
+
+- [Proceso general del sistema](../diagramas/procesos/proceso-general-sistema.md)
+- [Flujo de paciente, estudio y cobro](../diagramas/procesos/flujo-paciente-estudio-cobro.md)
+- [Proceso de autenticacion](../diagramas/procesos/proceso-autenticacion.md)
+- [Proceso de registro de paciente](../diagramas/procesos/proceso-registro-paciente.md)
+- [Proceso de registro de estudio](../diagramas/procesos/proceso-registro-estudio.md)
+- [Proceso de cobro de servicio](../diagramas/procesos/proceso-cobro-servicio.md)
+
 ## 1. Proceso de autenticacion de usuarios
 
 ### Objetivo
@@ -37,6 +46,8 @@ Permitir que los usuarios autorizados ingresen al sistema segun su rol y sucursa
 
 El usuario inicia sesion correctamente y accede solo a las funciones permitidas.
 
+Diagrama relacionado: [Proceso de autenticacion](../diagramas/procesos/proceso-autenticacion.md).
+
 ## 2. Proceso de registro de pacientes
 
 ### Objetivo
@@ -69,6 +80,8 @@ Registrar pacientes en el sistema para poder asociarlos con estudios, pagos e hi
 ### Resultado esperado
 
 El paciente queda registrado y disponible para asociarlo con estudios posteriores.
+
+Diagrama relacionado: [Proceso de registro de paciente](../diagramas/procesos/proceso-registro-paciente.md).
 
 ## 3. Proceso de registro de estudios
 
@@ -104,6 +117,8 @@ Registrar los estudios realizados a un paciente y conservar su historial dentro 
 
 El estudio queda registrado, asociado al paciente y preparado para su consulta o seguimiento.
 
+Diagrama relacionado: [Proceso de registro de estudio](../diagramas/procesos/proceso-registro-estudio.md).
+
 ## 4. Proceso de cobro de servicios
 
 ### Objetivo
@@ -134,6 +149,8 @@ Registrar el pago de los estudios o servicios realizados al paciente.
 ### Resultado esperado
 
 El pago queda registrado y el estado de cobranza se actualiza correctamente.
+
+Diagrama relacionado: [Proceso de cobro de servicio](../diagramas/procesos/proceso-cobro-servicio.md).
 
 ## 5. Procesos pendientes para fases posteriores
 

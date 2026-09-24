@@ -199,7 +199,26 @@ Entidad que representa el catalogo de servicios o estudios que ofrece el laborat
 
 - Un paciente puede tener varios estudios.
 - Cada estudio debe pertenecer a un paciente.
-- Esta relacion se detallara en el diccionario del modulo de estudios.
+- La relacion se representa con `Estudio.pacienteId`.
+
+### Servicio y Estudio
+
+- Un servicio puede utilizarse en varios estudios.
+- Cada estudio debe relacionarse con un servicio.
+- La relacion se representa con `Estudio.servicioId`.
+- El servicio define el costo base del estudio.
+
+### Usuario y Estudio
+
+- Un usuario puede registrar varios estudios.
+- Cada estudio debe guardar el usuario que lo registro o atendio.
+- La relacion se representa con `Estudio.usuarioId`.
+
+### Servicio e Inventario
+
+- Un servicio puede requerir uno o varios productos del inventario.
+- Esta relacion se documentara con una entidad intermedia en una fase posterior.
+- La entidad intermedia permitira indicar cantidad requerida por servicio.
 
 ## Dependencias entre modulos
 
@@ -209,15 +228,18 @@ Entidad que representa el catalogo de servicios o estudios que ofrece el laborat
 | Pacientes | Sucursales | Cada paciente debe registrarse en una sucursal. |
 | Estudios | Pacientes | Cada estudio debe asociarse a un paciente. |
 | Estudios | Usuarios | Se debe conocer que usuario registro o atendio el estudio. |
+| Estudios | Servicios | Cada estudio debe basarse en un servicio del catalogo. |
 | Cobros | Estudios | El cobro se realiza sobre un estudio o servicio registrado. |
+| Inventario | Servicios | Algunos servicios requieren insumos para realizarse. |
 
 ## Prioridad inicial
 
 1. Definir sucursales.
 2. Definir usuarios y roles.
 3. Definir pacientes.
-4. Definir estudios.
-5. Definir cobros e inventario relacionado.
+4. Definir servicios.
+5. Definir estudios.
+6. Definir cobros e inventario relacionado.
 
 ## Pendientes
 
@@ -226,3 +248,5 @@ Entidad que representa el catalogo de servicios o estudios que ofrece el laborat
 - Definir reglas de contrasena.
 - Definir si se agregaran campos de recuperacion de cuenta.
 - Definir reglas para detectar pacientes duplicados.
+- Definir si los estudios permiten pagos parciales.
+- Definir entidad intermedia para materiales requeridos por servicio.

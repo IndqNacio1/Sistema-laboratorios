@@ -9,8 +9,9 @@ Esta version cubre las entidades iniciales de la Fase 1:
 - Usuario
 - Sucursal
 - Paciente
+- Estudio
 
-Las entidades `Estudio`, `Servicio`, `Pago`, `Producto` y movimientos se documentaran en fases posteriores.
+Las entidades `Servicio`, `Pago`, `Producto` y movimientos se documentaran en fases posteriores.
 
 ## Usuario
 
@@ -111,6 +112,37 @@ Entidad que representa a la persona que recibe servicios o estudios del laborato
 
 - Activo
 - Inactivo
+
+## Estudio
+
+Entidad que representa un estudio realizado o solicitado para un paciente.
+
+| Campo | Tipo inicial | Obligatorio | Descripcion |
+| --- | --- | --- | --- |
+| id | UUID | Si | Identificador unico del estudio. |
+| pacienteId | UUID | Si | Identificador del paciente asociado al estudio. |
+| servicioId | UUID | Si | Identificador del servicio o estudio de catalogo. |
+| usuarioId | UUID | Si | Identificador del usuario que registro o atendio el estudio. |
+| fecha | Date | Si | Fecha en que se registra o realiza el estudio. |
+| resultado | String | No | Resultado o interpretacion del estudio. |
+| estado | Enum | Si | Estado operativo del estudio. |
+| createdAt | Timestamp | Si | Fecha de creacion del registro. |
+| updatedAt | Timestamp | Si | Fecha de ultima actualizacion del registro. |
+
+### Reglas iniciales
+
+- El estudio debe pertenecer a un paciente existente.
+- El estudio debe relacionarse con un servicio activo.
+- El estudio debe registrar el usuario que lo creo o atendio.
+- El resultado puede quedar pendiente al momento de registrar el estudio.
+- El historial del paciente se obtiene a partir de los estudios asociados.
+
+### Estados considerados
+
+- Pendiente
+- En proceso
+- Completado
+- Cancelado
 
 ## Relaciones iniciales
 

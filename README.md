@@ -30,6 +30,7 @@ npm run dev:backend
 ## Documentacion
 
 - [Diccionario de datos inicial](docs/modelos/diccionario-datos-inicial.md)
+- [Preparacion para diagrama de base de datos](docs/modelos/preparacion-diagrama-base-datos.md)
 - [Diagrama inicial de clases](docs/diagramas/diagrama-clases-inicial.md)
 - [Relaciones y reglas iniciales del modelo](docs/modelos/relaciones-y-reglas-iniciales.md)
 - [Modulo de autenticacion y usuarios](docs/modulos/autenticacion-usuarios.md)

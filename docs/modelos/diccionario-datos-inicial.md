@@ -12,8 +12,9 @@ Esta version cubre las entidades iniciales de la Fase 1:
 - Estudio
 - Servicio
 - Pago
+- Producto
 
-Las entidades `Producto` y movimientos se documentaran en fases posteriores.
+Las entidades de movimientos se documentaran en fases posteriores.
 
 ## Usuario
 
@@ -212,6 +213,38 @@ Entidad que representa el registro de cobro asociado a un estudio o servicio rea
 - Pagado
 - Parcial
 - Cancelado
+
+## Producto
+
+Entidad que representa un insumo o producto utilizado por el laboratorio.
+
+| Campo | Tipo inicial | Obligatorio | Descripcion |
+| --- | --- | --- | --- |
+| id | UUID | Si | Identificador unico del producto. |
+| nombre | String | Si | Nombre del producto o insumo. |
+| codigoBarras | String | No | Codigo de barras del producto, si aplica. |
+| clave | String | No | Clave interna o externa para identificar el producto. |
+| unidadMedida | String | Si | Unidad en la que se controla el producto. |
+| stock | Number | Si | Existencia actual del producto. |
+| stockMinimo | Number | No | Cantidad minima recomendada antes de generar alerta. |
+| foto | String | No | Ruta o referencia visual del producto. |
+| estatus | Enum | Si | Estado del producto dentro del catalogo. |
+| createdAt | Timestamp | Si | Fecha de creacion del registro. |
+| updatedAt | Timestamp | Si | Fecha de ultima actualizacion del registro. |
+
+### Reglas iniciales
+
+- El nombre del producto debe ser obligatorio.
+- El stock no debe ser negativo.
+- El stock no se modifica directamente desde el catalogo de productos.
+- Los cambios de existencia deben realizarse mediante compras, inventario inicial o movimientos.
+- Un producto inactivo no debe estar disponible para nuevos servicios.
+- El stock minimo se usara para identificar posibles faltantes.
+
+### Estatus considerados
+
+- Activo
+- Inactivo
 
 ## Relaciones iniciales
 

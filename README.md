@@ -35,3 +35,4 @@ npm run dev:backend
 - [Modulo de autenticacion y usuarios](docs/modulos/autenticacion-usuarios.md)
 - [Procesos principales iniciales](docs/procesos/procesos-principales-iniciales.md)
 - [Diagramas de procesos](docs/diagramas/procesos/README.md)
+- [Cierre semanal 2026-09-25](docs/planeaciones/cierre-semanal-2026-09-25.md)

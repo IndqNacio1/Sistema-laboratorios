@@ -11,8 +11,9 @@ Esta version cubre las entidades iniciales de la Fase 1:
 - Paciente
 - Estudio
 - Servicio
+- Pago
 
-Las entidades `Pago`, `Producto` y movimientos se documentaran en fases posteriores.
+Las entidades `Producto` y movimientos se documentaran en fases posteriores.
 
 ## Usuario
 
@@ -171,6 +172,46 @@ Entidad que representa el catalogo de servicios o estudios que ofrece el laborat
 
 - Activo
 - Inactivo
+
+## Pago
+
+Entidad que representa el registro de cobro asociado a un estudio o servicio realizado.
+
+| Campo | Tipo inicial | Obligatorio | Descripcion |
+| --- | --- | --- | --- |
+| id | UUID | Si | Identificador unico del pago. |
+| estudioId | UUID | Si | Identificador del estudio asociado al pago. |
+| usuarioId | UUID | Si | Identificador del usuario que atendio el cobro. |
+| monto | Number | Si | Total a cobrar por el estudio o servicio. |
+| montoRecibido | Number | No | Cantidad entregada por el paciente al momento del cobro. |
+| cambioDevuelto | Number | No | Cambio entregado al paciente cuando aplique. |
+| metodoPago | Enum | Si | Metodo utilizado para realizar el pago. |
+| estado | Enum | Si | Estado del pago. |
+| fecha | Date | Si | Fecha en que se registra el pago. |
+| createdAt | Timestamp | Si | Fecha de creacion del registro. |
+| updatedAt | Timestamp | Si | Fecha de ultima actualizacion del registro. |
+
+### Reglas iniciales
+
+- El pago debe pertenecer a un estudio registrado.
+- El pago debe registrar el usuario que atendio el cobro.
+- El monto debe ser mayor o igual a cero.
+- El metodo de pago debe pertenecer al catalogo permitido.
+- Si el pago se realiza en efectivo, se debe contemplar monto recibido y cambio devuelto.
+- El pago puede generar un movimiento financiero.
+
+### Metodos de pago considerados
+
+- Efectivo
+- Tarjeta
+- Transferencia
+
+### Estados considerados
+
+- Pendiente
+- Pagado
+- Parcial
+- Cancelado
 
 ## Relaciones iniciales
 

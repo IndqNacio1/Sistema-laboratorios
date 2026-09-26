@@ -294,6 +294,27 @@ Entidad que representa un insumo o producto utilizado por el laboratorio.
 - Esta relacion se documentara con una entidad intermedia en una fase posterior.
 - La entidad intermedia permitira indicar cantidad requerida por servicio.
 
+### Estudio y Pago
+
+- Un estudio puede tener un pago asociado.
+- Un pago pertenece a un estudio.
+- La relacion se representa con `Pago.estudioId`.
+- El pago registra el usuario que atendio el cobro mediante `Pago.usuarioId`.
+- La regla de pagos parciales queda pendiente de validacion.
+
+### Servicio y Producto
+
+- Un servicio puede requerir varios productos.
+- Un producto puede utilizarse en varios servicios.
+- La relacion final se representara con una entidad intermedia para materiales requeridos.
+- Esta relacion servira para descontar inventario al registrar estudios.
+
+### Producto e Inventario
+
+- Un producto puede tener varios movimientos de inventario.
+- El stock se actualizara a partir de movimientos, compras o inventario inicial.
+- El stock minimo permitira identificar productos con baja existencia.
+
 ## Dependencias entre modulos
 
 | Modulo | Depende de | Motivo |
@@ -304,7 +325,9 @@ Entidad que representa un insumo o producto utilizado por el laboratorio.
 | Estudios | Usuarios | Se debe conocer que usuario registro o atendio el estudio. |
 | Estudios | Servicios | Cada estudio debe basarse en un servicio del catalogo. |
 | Cobros | Estudios | El cobro se realiza sobre un estudio o servicio registrado. |
+| Cobros | Usuarios | Se debe conocer que usuario atendio el pago. |
 | Inventario | Servicios | Algunos servicios requieren insumos para realizarse. |
+| Inventario | Productos | Los movimientos afectan la existencia de productos. |
 
 ## Prioridad inicial
 
@@ -313,7 +336,8 @@ Entidad que representa un insumo o producto utilizado por el laboratorio.
 3. Definir pacientes.
 4. Definir servicios.
 5. Definir estudios.
-6. Definir cobros e inventario relacionado.
+6. Definir pagos.
+7. Definir productos e inventario relacionado.
 
 ## Pendientes
 
@@ -324,3 +348,6 @@ Entidad que representa un insumo o producto utilizado por el laboratorio.
 - Definir reglas para detectar pacientes duplicados.
 - Definir si los estudios permiten pagos parciales.
 - Definir entidad intermedia para materiales requeridos por servicio.
+- Definir catalogo final de metodos de pago.
+- Definir entidad para movimientos de inventario.
+- Definir entidad para movimientos financieros.

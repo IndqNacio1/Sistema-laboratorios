@@ -30,6 +30,7 @@ npm run dev:backend
 ## Documentacion
 
 - [Arquitectura frontend/backend](docs/arquitectura/arquitectura-frontend-backend.md)
+- [Estructura inicial de rutas](docs/arquitectura/estructura-rutas.md)
 - [Diccionario de datos inicial](docs/modelos/diccionario-datos-inicial.md)
 - [Revision de consistencia del diccionario de datos](docs/modelos/revision-consistencia-diccionario.md)
 - [Preparacion para diagrama de base de datos](docs/modelos/preparacion-diagrama-base-datos.md)

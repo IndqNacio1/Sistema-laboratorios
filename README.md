@@ -32,6 +32,7 @@ npm run dev:backend
 - [Arquitectura frontend/backend](docs/arquitectura/arquitectura-frontend-backend.md)
 - [Estructura inicial de rutas](docs/arquitectura/estructura-rutas.md)
 - [Base de datos inicial PostgreSQL y MongoDB](docs/arquitectura/base-datos-inicial.md)
+- [Contratos de API - Autenticacion](docs/api/contratos-autenticacion.md)
 - [Diccionario de datos inicial](docs/modelos/diccionario-datos-inicial.md)
 - [Revision de consistencia del diccionario de datos](docs/modelos/revision-consistencia-diccionario.md)
 - [Preparacion para diagrama de base de datos](docs/modelos/preparacion-diagrama-base-datos.md)

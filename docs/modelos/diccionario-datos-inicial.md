@@ -9,8 +9,12 @@ Esta version cubre las entidades iniciales de la Fase 1:
 - Usuario
 - Sucursal
 - Paciente
+- Estudio
+- Servicio
+- Pago
+- Producto
 
-Las entidades `Estudio`, `Servicio`, `Pago`, `Producto` y movimientos se documentaran en fases posteriores.
+Las entidades de movimientos se documentaran en fases posteriores.
 
 ## Usuario
 
@@ -112,6 +116,136 @@ Entidad que representa a la persona que recibe servicios o estudios del laborato
 - Activo
 - Inactivo
 
+## Estudio
+
+Entidad que representa un estudio realizado o solicitado para un paciente.
+
+| Campo | Tipo inicial | Obligatorio | Descripcion |
+| --- | --- | --- | --- |
+| id | UUID | Si | Identificador unico del estudio. |
+| pacienteId | UUID | Si | Identificador del paciente asociado al estudio. |
+| servicioId | UUID | Si | Identificador del servicio o estudio de catalogo. |
+| usuarioId | UUID | Si | Identificador del usuario que registro o atendio el estudio. |
+| fecha | Date | Si | Fecha en que se registra o realiza el estudio. |
+| resultado | String | No | Resultado o interpretacion del estudio. |
+| estado | Enum | Si | Estado operativo del estudio. |
+| createdAt | Timestamp | Si | Fecha de creacion del registro. |
+| updatedAt | Timestamp | Si | Fecha de ultima actualizacion del registro. |
+
+### Reglas iniciales
+
+- El estudio debe pertenecer a un paciente existente.
+- El estudio debe relacionarse con un servicio activo.
+- El estudio debe registrar el usuario que lo creo o atendio.
+- El resultado puede quedar pendiente al momento de registrar el estudio.
+- El historial del paciente se obtiene a partir de los estudios asociados.
+
+### Estados considerados
+
+- Pendiente
+- En proceso
+- Completado
+- Cancelado
+
+## Servicio
+
+Entidad que representa el catalogo de servicios o estudios que ofrece el laboratorio.
+
+| Campo | Tipo inicial | Obligatorio | Descripcion |
+| --- | --- | --- | --- |
+| id | UUID | Si | Identificador unico del servicio. |
+| nombre | String | Si | Nombre del servicio o estudio. |
+| descripcion | String | No | Descripcion general del servicio. |
+| costo | Number | Si | Precio base del servicio. |
+| estatus | Enum | Si | Estado del servicio dentro del catalogo. |
+| createdAt | Timestamp | Si | Fecha de creacion del registro. |
+| updatedAt | Timestamp | Si | Fecha de ultima actualizacion del registro. |
+
+### Reglas iniciales
+
+- El nombre del servicio debe ser obligatorio.
+- El costo debe ser mayor o igual a cero.
+- Un servicio inactivo no debe estar disponible para nuevos estudios.
+- Un servicio puede requerir insumos del inventario.
+- Los materiales requeridos se documentaran con una entidad de relacion en una fase posterior.
+
+### Estatus considerados
+
+- Activo
+- Inactivo
+
+## Pago
+
+Entidad que representa el registro de cobro asociado a un estudio o servicio realizado.
+
+| Campo | Tipo inicial | Obligatorio | Descripcion |
+| --- | --- | --- | --- |
+| id | UUID | Si | Identificador unico del pago. |
+| estudioId | UUID | Si | Identificador del estudio asociado al pago. |
+| usuarioId | UUID | Si | Identificador del usuario que atendio el cobro. |
+| monto | Number | Si | Total a cobrar por el estudio o servicio. |
+| montoRecibido | Number | No | Cantidad entregada por el paciente al momento del cobro. |
+| cambioDevuelto | Number | No | Cambio entregado al paciente cuando aplique. |
+| metodoPago | Enum | Si | Metodo utilizado para realizar el pago. |
+| estado | Enum | Si | Estado del pago. |
+| fecha | Date | Si | Fecha en que se registra el pago. |
+| createdAt | Timestamp | Si | Fecha de creacion del registro. |
+| updatedAt | Timestamp | Si | Fecha de ultima actualizacion del registro. |
+
+### Reglas iniciales
+
+- El pago debe pertenecer a un estudio registrado.
+- El pago debe registrar el usuario que atendio el cobro.
+- El monto debe ser mayor o igual a cero.
+- El metodo de pago debe pertenecer al catalogo permitido.
+- Si el pago se realiza en efectivo, se debe contemplar monto recibido y cambio devuelto.
+- El pago puede generar un movimiento financiero.
+
+### Metodos de pago considerados
+
+- Efectivo
+- Tarjeta
+- Transferencia
+
+### Estados considerados
+
+- Pendiente
+- Pagado
+- Parcial
+- Cancelado
+
+## Producto
+
+Entidad que representa un insumo o producto utilizado por el laboratorio.
+
+| Campo | Tipo inicial | Obligatorio | Descripcion |
+| --- | --- | --- | --- |
+| id | UUID | Si | Identificador unico del producto. |
+| nombre | String | Si | Nombre del producto o insumo. |
+| codigoBarras | String | No | Codigo de barras del producto, si aplica. |
+| clave | String | No | Clave interna o externa para identificar el producto. |
+| unidadMedida | String | Si | Unidad en la que se controla el producto. |
+| stock | Number | Si | Existencia actual del producto. |
+| stockMinimo | Number | No | Cantidad minima recomendada antes de generar alerta. |
+| foto | String | No | Ruta o referencia visual del producto. |
+| estatus | Enum | Si | Estado del producto dentro del catalogo. |
+| createdAt | Timestamp | Si | Fecha de creacion del registro. |
+| updatedAt | Timestamp | Si | Fecha de ultima actualizacion del registro. |
+
+### Reglas iniciales
+
+- El nombre del producto debe ser obligatorio.
+- El stock no debe ser negativo.
+- El stock no se modifica directamente desde el catalogo de productos.
+- Los cambios de existencia deben realizarse mediante compras, inventario inicial o movimientos.
+- Un producto inactivo no debe estar disponible para nuevos servicios.
+- El stock minimo se usara para identificar posibles faltantes.
+
+### Estatus considerados
+
+- Activo
+- Inactivo
+
 ## Relaciones iniciales
 
 ### Sucursal y Usuario
@@ -139,7 +273,47 @@ Entidad que representa a la persona que recibe servicios o estudios del laborato
 
 - Un paciente puede tener varios estudios.
 - Cada estudio debe pertenecer a un paciente.
-- Esta relacion se detallara en el diccionario del modulo de estudios.
+- La relacion se representa con `Estudio.pacienteId`.
+
+### Servicio y Estudio
+
+- Un servicio puede utilizarse en varios estudios.
+- Cada estudio debe relacionarse con un servicio.
+- La relacion se representa con `Estudio.servicioId`.
+- El servicio define el costo base del estudio.
+
+### Usuario y Estudio
+
+- Un usuario puede registrar varios estudios.
+- Cada estudio debe guardar el usuario que lo registro o atendio.
+- La relacion se representa con `Estudio.usuarioId`.
+
+### Servicio e Inventario
+
+- Un servicio puede requerir uno o varios productos del inventario.
+- Esta relacion se documentara con una entidad intermedia en una fase posterior.
+- La entidad intermedia permitira indicar cantidad requerida por servicio.
+
+### Estudio y Pago
+
+- Un estudio puede tener un pago asociado.
+- Un pago pertenece a un estudio.
+- La relacion se representa con `Pago.estudioId`.
+- El pago registra el usuario que atendio el cobro mediante `Pago.usuarioId`.
+- La regla de pagos parciales queda pendiente de validacion.
+
+### Servicio y Producto
+
+- Un servicio puede requerir varios productos.
+- Un producto puede utilizarse en varios servicios.
+- La relacion final se representara con una entidad intermedia para materiales requeridos.
+- Esta relacion servira para descontar inventario al registrar estudios.
+
+### Producto e Inventario
+
+- Un producto puede tener varios movimientos de inventario.
+- El stock se actualizara a partir de movimientos, compras o inventario inicial.
+- El stock minimo permitira identificar productos con baja existencia.
 
 ## Dependencias entre modulos
 
@@ -149,15 +323,21 @@ Entidad que representa a la persona que recibe servicios o estudios del laborato
 | Pacientes | Sucursales | Cada paciente debe registrarse en una sucursal. |
 | Estudios | Pacientes | Cada estudio debe asociarse a un paciente. |
 | Estudios | Usuarios | Se debe conocer que usuario registro o atendio el estudio. |
+| Estudios | Servicios | Cada estudio debe basarse en un servicio del catalogo. |
 | Cobros | Estudios | El cobro se realiza sobre un estudio o servicio registrado. |
+| Cobros | Usuarios | Se debe conocer que usuario atendio el pago. |
+| Inventario | Servicios | Algunos servicios requieren insumos para realizarse. |
+| Inventario | Productos | Los movimientos afectan la existencia de productos. |
 
 ## Prioridad inicial
 
 1. Definir sucursales.
 2. Definir usuarios y roles.
 3. Definir pacientes.
-4. Definir estudios.
-5. Definir cobros e inventario relacionado.
+4. Definir servicios.
+5. Definir estudios.
+6. Definir pagos.
+7. Definir productos e inventario relacionado.
 
 ## Pendientes
 
@@ -166,3 +346,8 @@ Entidad que representa a la persona que recibe servicios o estudios del laborato
 - Definir reglas de contrasena.
 - Definir si se agregaran campos de recuperacion de cuenta.
 - Definir reglas para detectar pacientes duplicados.
+- Definir si los estudios permiten pagos parciales.
+- Definir entidad intermedia para materiales requeridos por servicio.
+- Definir catalogo final de metodos de pago.
+- Definir entidad para movimientos de inventario.
+- Definir entidad para movimientos financieros.

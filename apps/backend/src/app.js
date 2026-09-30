@@ -1,14 +1,19 @@
 import express from 'express';
 import cors from 'cors';
-import authRoutes from './routes/auth.routes.js';
-import healthRoutes from './routes/health.routes.js';
 
 const app = express();
 
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
-app.use('/auth', authRoutes);
-app.use('/health', healthRoutes);
+// Ruta de prueba
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    estatus: 'OK',
+    mensaje: 'El servidor del laboratorio está corriendo perfectamente',
+    tiempo: new Date()
+  });
+});
 
 export default app;

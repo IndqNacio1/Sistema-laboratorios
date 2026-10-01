@@ -45,3 +45,4 @@ npm run dev:backend
 - [Diagramas de procesos](docs/diagramas/procesos/README.md)
 - [Cierre semanal 2026-09-25](docs/planeaciones/cierre-semanal-2026-09-25.md)
 - [Sincronizacion entre Figma y diccionario de datos](docs/diseno/sincronizacion-figma-datos.md)
+- [Avance frontend 2026-10-01](docs/planeaciones/avance-2026-10-01-frontend.md)

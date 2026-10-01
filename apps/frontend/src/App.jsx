@@ -1,7 +1,7 @@
-import LoginPage from './pages/LoginPage.jsx';
+import DashboardPage from './pages/DashboardPage.jsx';
 
 function App() {
-  return <LoginPage />;
+  return <DashboardPage />;
 }
 
 export default App;

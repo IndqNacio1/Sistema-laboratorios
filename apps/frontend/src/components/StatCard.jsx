@@ -1,3 +1,5 @@
+import React from 'react';
+
 function StatCard({ label, value, detail }) {
   return (
     <article className="rounded border border-slate-200 bg-white p-4 shadow-sm">

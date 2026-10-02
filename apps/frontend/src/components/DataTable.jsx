@@ -1,3 +1,5 @@
+import React from 'react';
+
 function DataTable({ columns, rows }) {
   return (
     <div className="overflow-hidden rounded border border-slate-200 bg-white shadow-sm">

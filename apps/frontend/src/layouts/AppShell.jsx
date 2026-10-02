@@ -1,3 +1,4 @@
+import React from 'react';
 import { appRoutes } from '../routes/appRoutes.js';
 
 function AppShell({ children }) {

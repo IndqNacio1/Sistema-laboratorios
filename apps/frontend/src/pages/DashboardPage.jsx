@@ -1,3 +1,4 @@
+import React from 'react';
 import DataTable from '../components/DataTable.jsx';
 import StatCard from '../components/StatCard.jsx';
 import AppShell from '../layouts/AppShell.jsx';

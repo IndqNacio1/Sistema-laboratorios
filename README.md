@@ -46,3 +46,4 @@ npm run dev:backend
 - [Cierre semanal 2026-09-25](docs/planeaciones/cierre-semanal-2026-09-25.md)
 - [Sincronizacion entre Figma y diccionario de datos](docs/diseno/sincronizacion-figma-datos.md)
 - [Avance frontend 2026-10-01](docs/planeaciones/avance-2026-10-01-frontend.md)
+- [Avance frontend usuarios 2026-10-06](docs/planeaciones/avance-2026-10-06-usuarios-frontend.md)

@@ -14,10 +14,10 @@ function DataTable({ columns, rows }) {
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 text-slate-700">
-          {rows.map((row) => (
-            <tr key={row.folio}>
+          {rows.map((row, rowIndex) => (
+            <tr key={row.id || row.folio || rowIndex}>
               {columns.map((column) => (
-                <td key={`${row.folio}-${column.key}`} className="px-4 py-3">
+                <td key={`${row.id || row.folio || rowIndex}-${column.key}`} className="px-4 py-3">
                   {row[column.key]}
                 </td>
               ))}

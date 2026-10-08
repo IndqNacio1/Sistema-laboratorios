@@ -64,17 +64,22 @@ export const users = [
   },
 ];
 
-export const userFilters = [
-  {
-    label: 'Rol',
-    value: 'Todos',
-  },
-  {
-    label: 'Estado',
-    value: 'Activos y pendientes',
-  },
-  {
-    label: 'Sucursal',
-    value: 'Todas las sucursales',
-  },
+export const userFilterOptions = {
+  roles: ['Todos', 'Administrador', 'Supervisor', 'Recepcion', 'Operativo'],
+  estados: ['Todos', 'Activo', 'Pendiente', 'Inactivo'],
+  sucursales: ['Todas', 'Matriz', 'Sucursal Norte'],
+};
+
+export const emptyUserForm = {
+  nombre: '',
+  correo: '',
+  rol: 'Recepcion',
+  sucursal: 'Matriz',
+  estado: 'Pendiente',
+};
+
+export const userActions = [
+  'Editar informacion',
+  'Cambiar estado',
+  'Revisar permisos',
 ];

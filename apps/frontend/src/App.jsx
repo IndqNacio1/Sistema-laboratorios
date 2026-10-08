@@ -1,7 +1,13 @@
-import LoginPage from './pages/LoginPage.jsx';
+import React from 'react';
+import DashboardPage from './pages/DashboardPage.jsx';
+import UsersPage from './pages/UsersPage.jsx';
 
 function App() {
-  return <LoginPage />;
+  if (window.location.pathname === '/usuarios') {
+    return <UsersPage />;
+  }
+
+  return <DashboardPage />;
 }
 
 export default App;

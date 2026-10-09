@@ -2,7 +2,26 @@ import React, { useMemo, useState } from 'react';
 import DataTable from '../components/DataTable.jsx';
 import StatCard from '../components/StatCard.jsx';
 import AppShell from '../layouts/AppShell.jsx';
-import { emptyUserForm, userActions, userFilterOptions, userStats, users } from '../data/usersData.js';
+import {
+  emptyUserForm,
+  userActions,
+  userApiChecklist,
+  userFilterOptions,
+  userStats,
+  users,
+} from '../data/usersData.js';
+
+const statusStyles = {
+  Activo: 'bg-emerald-50 text-emerald-700',
+  Pendiente: 'bg-amber-50 text-amber-700',
+  Inactivo: 'bg-slate-100 text-slate-600',
+};
+
+const renderStatus = (status) => (
+  <span className={`rounded px-2 py-1 text-xs font-medium ${statusStyles[status] || 'bg-slate-100 text-slate-600'}`}>
+    {status}
+  </span>
+);
 
 const userColumns = [
   { key: 'id', label: 'ID' },
@@ -10,7 +29,7 @@ const userColumns = [
   { key: 'correo', label: 'Correo' },
   { key: 'rol', label: 'Rol' },
   { key: 'sucursal', label: 'Sucursal' },
-  { key: 'estado', label: 'Estado' },
+  { key: 'estado', label: 'Estado', render: renderStatus },
 ];
 
 function UsersPage() {
@@ -103,7 +122,11 @@ function UsersPage() {
         </div>
 
         <div className="mt-4">
-          <DataTable columns={userColumns} rows={filteredUsers} />
+          <DataTable
+            columns={userColumns}
+            emptyMessage="No hay usuarios con los filtros seleccionados."
+            rows={filteredUsers}
+          />
         </div>
       </section>
 
@@ -194,6 +217,25 @@ function UsersPage() {
             </label>
           </form>
         </aside>
+      </section>
+
+      <section className="mt-6 rounded border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="flex flex-col gap-1">
+          <h3 className="text-base font-semibold">Preparacion para API</h3>
+          <p className="text-sm text-slate-500">
+            Relacion entre elementos visuales de la pantalla y endpoints esperados.
+          </p>
+        </div>
+
+        <div className="mt-4 grid gap-3 lg:grid-cols-4">
+          {userApiChecklist.map((item) => (
+            <article key={item.endpoint} className="rounded border border-slate-200 p-3">
+              <p className="text-sm font-medium text-slate-900">{item.item}</p>
+              <p className="mt-1 text-xs text-slate-500">{item.endpoint}</p>
+              <p className="mt-3 text-xs font-medium text-slate-700">{item.status}</p>
+            </article>
+          ))}
+        </div>
       </section>
     </AppShell>
   );

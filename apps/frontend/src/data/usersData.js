@@ -83,3 +83,26 @@ export const userActions = [
   'Cambiar estado',
   'Revisar permisos',
 ];
+
+export const userApiChecklist = [
+  {
+    item: 'Listado de usuarios',
+    endpoint: 'GET /usuarios',
+    status: 'Pendiente de API',
+  },
+  {
+    item: 'Alta de usuario',
+    endpoint: 'POST /usuarios',
+    status: 'Formulario preparado',
+  },
+  {
+    item: 'Actualizacion de usuario',
+    endpoint: 'PATCH /usuarios/:id',
+    status: 'Estructura visual',
+  },
+  {
+    item: 'Cambio de estado',
+    endpoint: 'PATCH /usuarios/:id/estado',
+    status: 'Accion preparada',
+  },
+];

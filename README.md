@@ -49,3 +49,4 @@ npm run dev:backend
 - [Avance frontend usuarios 2026-10-06](docs/planeaciones/avance-2026-10-06-usuarios-frontend.md)
 - [Avance frontend usuarios 2026-10-07](docs/planeaciones/avance-2026-10-07-usuarios-frontend.md)
 - [Avance frontend usuarios 2026-10-08](docs/planeaciones/avance-2026-10-08-usuarios-api.md)
+- [Avance frontend usuarios 2026-10-12](docs/planeaciones/avance-2026-10-12-servicio-usuarios.md)

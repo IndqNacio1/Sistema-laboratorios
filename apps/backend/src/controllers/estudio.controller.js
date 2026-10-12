@@ -21,3 +21,21 @@ export const createEstudio = async (req, res) => {
         res.status(500).json({ message: "Error al crear el estudio" });
     }
 };
+
+export const subirResultadoEstudio = async (req, res, next) => {
+  try {
+    // Si multer funcionó, el archivo vendrá en req.file
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No se subió ningún archivo PDF' });
+    }
+    
+    // Aquí después guardarías la ruta req.file.path en tu base de datos ligada al Estudio
+    res.status(200).json({
+      success: true,
+      message: 'Archivo subido correctamente',
+      data: req.file
+    });
+  } catch (error) {
+    next(error);
+  }
+};

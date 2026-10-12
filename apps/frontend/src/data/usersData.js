@@ -21,7 +21,7 @@ export const userStats = [
   },
 ];
 
-export const users = [
+export const mockUsers = [
   {
     id: 'USR-001',
     nombre: 'Julio Lugo',

@@ -8,8 +8,8 @@ import {
   userApiChecklist,
   userFilterOptions,
   userStats,
-  users,
 } from '../data/usersData.js';
+import { getUsers } from '../services/usersService.js';
 
 const statusStyles = {
   Activo: 'bg-emerald-50 text-emerald-700',
@@ -33,6 +33,7 @@ const userColumns = [
 ];
 
 function UsersPage() {
+  const users = getUsers();
   const [filters, setFilters] = useState({
     rol: 'Todos',
     estado: 'Todos',

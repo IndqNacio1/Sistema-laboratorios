@@ -2,7 +2,7 @@ import React from 'react';
 
 function DataTable({ columns, emptyMessage = 'No hay registros para mostrar.', rows }) {
   return (
-    <div className="overflow-hidden rounded border border-slate-200 bg-white shadow-sm">
+    <div className="overflow-x-auto rounded border border-slate-200 bg-white shadow-sm">
       <table className="w-full border-collapse text-left text-sm">
         <thead className="bg-slate-50 text-slate-600">
           <tr>

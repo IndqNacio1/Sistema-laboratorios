@@ -34,6 +34,7 @@ npm run dev:backend
 - [Base de datos inicial PostgreSQL y MongoDB](docs/arquitectura/base-datos-inicial.md)
 - [Contratos de API - Autenticacion](docs/api/contratos-autenticacion.md)
 - [Contratos de API - Usuarios](docs/api/contratos-usuarios.md)
+- [Integracion del frontend de usuarios](docs/api/integracion-usuarios-frontend.md)
 - [Reglas de acceso por rol](docs/api/reglas-acceso-roles.md)
 - [Diccionario de datos inicial](docs/modelos/diccionario-datos-inicial.md)
 - [Revision de consistencia del diccionario de datos](docs/modelos/revision-consistencia-diccionario.md)

@@ -36,21 +36,18 @@ no `nombres`, `apellidos` y `contrasena`. Devuelve un arreglo para el listado
 y el registro creado para el alta. El servicio adapta estos datos y descarta
 campos adicionales, incluida la contrasena, antes de guardarlos en estado.
 
-La entidad actual no tiene sucursal ni estado. Esos filtros no se muestran
-con valores inventados. El valor historico `recepcionista` se muestra como
-Recepcion; las altas envian `recepcion`, de acuerdo con las constantes del backend.
+El modelo relacional ahora tiene sucursal y estatus. La pantalla conserva
+sus campos actuales; la asignacion inicial utiliza Matriz y estatus activo.
+Los filtros de sucursal y estatus quedan pendientes de integrar con estos campos.
+El valor historico `recepcionista` se migra a `recepcion`.
 
 ## Dependencias pendientes del backend
 
 - Implementar la ruta de edicion. `usuario.routes.js` solo registra GET y POST;
   los PUT/PATCH descritos en documentos anteriores aun no existen.
-- Definir campos y rutas para cambios de estado y asignacion de sucursal.
-- Excluir `password` de la respuesta GET en el servidor. Descartarlo en el
-  frontend no evita que viaje en la respuesta HTTP.
+- Implementar rutas para cambios de estado y asignacion de sucursal.
 - Completar la proteccion de rutas y el flujo de sesion antes de integrar JWT
   en las solicitudes del frontend. Las rutas actuales de usuarios son publicas.
-- Configurar la conexion local a PostgreSQL con las variables requeridas
-  por `apps/backend/src/config/db.js`.
 
 ## Verificacion
 
@@ -65,9 +62,11 @@ con respuestas controladas cubren carga, consulta, busqueda, alta, validacion,
 duplicados y listado vacio en escritorio y movil. Estas comprobaciones no
 sustituyen una prueba de persistencia contra PostgreSQL.
 
-En la comprobacion local, `/api/health` respondio 200 y `/api/usuarios` respondio
-500. La conexion a PostgreSQL fallo porque `DB_PASSWORD` no esta configurada.
-No se confirmaron consultas ni altas persistidas en la base de datos real.
+La conexion local a PostgreSQL quedo verificada: `/api/health` y `/api/usuarios`
+responden 200. Las pruebas reales registran un usuario, comprueban su persistencia
+en `laboratorio.usuarios`, consultan el listado, rechazan duplicados y verifican
+el inicio de sesion con JWT. Los datos temporales se retiran al finalizar.
+El hash se excluye de las consultas normales mediante el modelo TypeORM.
 
 Se corrigio la dependencia inexistente `typeorm@^1.1.1` por `^0.3.28` y se
 actualizo el lockfile. La instalacion se completo con `npm ci --ignore-scripts`.

@@ -37,6 +37,7 @@ npm run dev:backend
 - [Integracion del frontend de usuarios](docs/api/integracion-usuarios-frontend.md)
 - [Reglas de acceso por rol](docs/api/reglas-acceso-roles.md)
 - [Diccionario de datos inicial](docs/modelos/diccionario-datos-inicial.md)
+- [Base local de PostgreSQL](docs/modelos/base-local-postgresql.md)
 - [Revision de consistencia del diccionario de datos](docs/modelos/revision-consistencia-diccionario.md)
 - [Preparacion para diagrama de base de datos](docs/modelos/preparacion-diagrama-base-datos.md)
 - [Diagrama inicial de clases](docs/diagramas/diagrama-clases-inicial.md)

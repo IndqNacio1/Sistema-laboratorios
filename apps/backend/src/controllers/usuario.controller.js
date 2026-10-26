@@ -6,6 +6,13 @@ import bcrypt from 'bcryptjs';
 export const createUsuario = async (req, res) => {
     try {
         const { nombre, correo, password, rol } = req.body;
+        const roles = ['administrador', 'supervisor', 'operativo', 'recepcion'];
+        if (typeof nombre !== 'string' || !nombre.trim() || nombre.trim().length > 100
+            || typeof correo !== 'string' || correo.length > 100 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.trim())
+            || typeof password !== 'string' || password.length < 8 || Buffer.byteLength(password, 'utf8') > 72
+            || (rol && !roles.includes(rol))) {
+            return res.status(400).json({ message: 'Revisa el nombre, correo, contrasena y rol del usuario.' });
+        }
         const usuarioRepository = AppDataSource.getRepository(UsuarioSchema);
 
         // --- NUEVO: Encriptar la contraseña ---
@@ -13,10 +20,10 @@ export const createUsuario = async (req, res) => {
         const passwordEncriptada = await bcrypt.hash(password, salt);
 
         const nuevoUsuario = usuarioRepository.create({
-            nombre,
-            correo,
+            nombre: nombre.trim(),
+            correo: correo.trim().toLowerCase(),
             password: passwordEncriptada, // Guardamos la versión encriptada
-            rol: rol || 'recepcionista'
+            rol: rol || 'recepcion'
         });
 
         const resultado = await usuarioRepository.save(nuevoUsuario);
@@ -25,7 +32,9 @@ export const createUsuario = async (req, res) => {
         resultado.password = undefined; 
         res.status(201).json(resultado);
     } catch (error) {
-        console.error("Error REAL detallado:", error); // <- Agregamos esto para depurar
+        if (error.code === '23505') {
+            return res.status(409).json({ message: 'El correo ya esta registrado.' });
+        }
         res.status(500).json({ message: "Error al guardar el usuario" });
     }
 };

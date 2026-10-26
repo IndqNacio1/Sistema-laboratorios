@@ -1,8 +1,8 @@
 import React from 'react';
 
-function DataTable({ columns, rows }) {
+function DataTable({ columns, emptyMessage = 'No hay registros para mostrar.', rows }) {
   return (
-    <div className="overflow-hidden rounded border border-slate-200 bg-white shadow-sm">
+    <div className="overflow-x-auto rounded border border-slate-200 bg-white shadow-sm">
       <table className="w-full border-collapse text-left text-sm">
         <thead className="bg-slate-50 text-slate-600">
           <tr>
@@ -14,15 +14,23 @@ function DataTable({ columns, rows }) {
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 text-slate-700">
-          {rows.map((row, rowIndex) => (
-            <tr key={row.id || row.folio || rowIndex}>
-              {columns.map((column) => (
-                <td key={`${row.id || row.folio || rowIndex}-${column.key}`} className="px-4 py-3">
-                  {row[column.key]}
-                </td>
-              ))}
+          {rows.length === 0 ? (
+            <tr>
+              <td className="px-4 py-6 text-center text-slate-500" colSpan={columns.length}>
+                {emptyMessage}
+              </td>
             </tr>
-          ))}
+          ) : (
+            rows.map((row, rowIndex) => (
+              <tr key={row.id || row.folio || rowIndex}>
+                {columns.map((column) => (
+                  <td key={`${row.id || row.folio || rowIndex}-${column.key}`} className="px-4 py-3">
+                    {column.render ? column.render(row[column.key], row) : row[column.key]}
+                  </td>
+                ))}
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

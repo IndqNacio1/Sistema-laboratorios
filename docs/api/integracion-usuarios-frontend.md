@@ -16,9 +16,9 @@ El frontend usa `http://localhost:3000/api` por defecto. Para otro servidor,
 crear `apps/frontend/.env.local` con la variable de `apps/frontend/.env.example`
 y reiniciar Vite. Esta variable es publica; no debe contener secretos.
 
-```text
+
 VITE_API_URL=http://localhost:3000/api
-```
+
 
 Ejecutar desde la raiz del repositorio, en terminales separadas:
 

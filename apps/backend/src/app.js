@@ -7,6 +7,7 @@ import estudioRoutes from './routes/estudio.routes.js';
 import inventarioRoutes from './routes/inventario.routes.js';
 import ventaRoutes from './routes/venta.routes.js';
 import authRoutes from './routes/auth.routes.js';
+import sucursalRoutes from './routes/sucursal.routes.js';
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.get('/api/health', async (req, res) => {
 });
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/pacientes', pacienteRoutes);
+app.use('/api/sucursales', sucursalRoutes);
 app.use('/api/estudios', estudioRoutes);
 app.use('/api/inventarios', inventarioRoutes);
 app.use('/api/ventas', ventaRoutes);

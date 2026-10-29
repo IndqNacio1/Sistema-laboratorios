@@ -15,8 +15,8 @@ export const appRoutes = [
     module: 'Recepcion',
   },
   {
-    label: 'Estudios',
-    path: '/estudios',
+    label: 'Servicios',
+    path: '/servicios',
     module: 'Laboratorio',
   },
   {

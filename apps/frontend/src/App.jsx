@@ -2,8 +2,12 @@ import React from 'react';
 import DashboardPage from './pages/DashboardPage.jsx';
 import UsersPage from './pages/UsersPage.jsx';
 import PatientsPage from './pages/PatientsPage.jsx';
+import ServicesPage from './pages/ServicesPage.jsx';
 
 function App() {
+  if (['/servicios', '/estudios'].includes(window.location.pathname)) {
+    return <ServicesPage />;
+  }
   if (window.location.pathname === '/pacientes') {
     return <PatientsPage />;
   }

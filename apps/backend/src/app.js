@@ -28,6 +28,7 @@ app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/pacientes', pacienteRoutes);
 app.use('/api/sucursales', sucursalRoutes);
 app.use('/api/estudios', estudioRoutes);
+app.use('/api/servicios', estudioRoutes);
 app.use('/api/inventarios', inventarioRoutes);
 app.use('/api/ventas', ventaRoutes);
 app.use('/api/auth', authRoutes);

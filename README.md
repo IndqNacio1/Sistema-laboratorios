@@ -36,6 +36,7 @@ npm run dev:backend
 - [Contratos de API - Usuarios](docs/api/contratos-usuarios.md)
 - [Integracion del frontend de usuarios](docs/api/integracion-usuarios-frontend.md)
 - [Integracion de pacientes](docs/api/integracion-pacientes.md)
+- [Integracion del catalogo de servicios](docs/api/integracion-servicios.md)
 - [Reglas de acceso por rol](docs/api/reglas-acceso-roles.md)
 - [Diccionario de datos inicial](docs/modelos/diccionario-datos-inicial.md)
 - [Base local de PostgreSQL](docs/modelos/base-local-postgresql.md)

@@ -65,6 +65,7 @@ cuando no esta disponible.
 | --- | --- |
 | /api/usuarios | laboratorio.usuarios |
 | /api/pacientes | laboratorio.pacientes |
+| /api/servicios | laboratorio.servicios, catalogo con registro y edicion |
 | /api/estudios | laboratorio.servicios, catalogo anterior |
 | /api/inventarios | laboratorio.productos |
 | /api/ventas | public.ventas, compatibilidad temporal |

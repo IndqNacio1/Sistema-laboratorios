@@ -1,18 +1,11 @@
 import { Router } from 'express';
-import { AppDataSource } from '../config/db.js';
-import { SucursalSchema } from '../entities/Laboratorio.js';
+import { getSucursales, getSucursal, createSucursal, updateSucursal } from '../controllers/sucursal.controller.js';
 
 const router = Router();
 
-router.get('/', async (req, res) => {
-  try {
-    const branches = await AppDataSource.getRepository(SucursalSchema).find({
-      select: { id: true, nombre: true, estatus: true }, order: { nombre: 'ASC' },
-    });
-    res.json(branches);
-  } catch {
-    res.status(500).json({ message: 'Error al obtener sucursales.' });
-  }
-});
+router.get('/', getSucursales);
+router.get('/:id', getSucursal);
+router.post('/', createSucursal);
+router.put('/:id', updateSucursal);
 
 export default router;

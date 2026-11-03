@@ -10,11 +10,12 @@ test('registro y edicion de sucursales en PostgreSQL', async (t) => {
   await AppDataSource.initialize();
   const repository = AppDataSource.getRepository(SucursalSchema);
   const ids = [];
-  const personId = randomUUID();
+  let personId;
   const userId = randomUUID();
   const server = app.listen(0, '127.0.0.1');
   await once(server, 'listening');
   const base = `http://127.0.0.1:${server.address().port}/api/sucursales`;
+  const patientsUrl = `http://127.0.0.1:${server.address().port}/api/pacientes`;
   const send = (path, method, body) => fetch(`${base}${path}`, { method,
     headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   const form = { nombre: `Sucursal API ${randomUUID()}`, direccion: 'Calle de prueba 123', telefono: '+52 6681234567', estatus: 'activo' };
@@ -35,7 +36,12 @@ test('registro y edicion de sucursales en PostgreSQL', async (t) => {
       assert.equal((await send('', 'POST', form)).status, 409);
     });
     await t.test('consulta y edita sin perder relaciones', async () => {
-      await AppDataSource.getRepository(PacienteSchema).save({ id: personId, sucursalId: saved.id, nombre: 'Paciente temporal', apellidos: 'Prueba' });
+      const active = await (await fetch(`${base}?estatus=activo`)).json();
+      assert.ok(active.some((branch) => branch.id === saved.id));
+      const patient = await fetch(patientsUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sucursalId: saved.id, nombre: 'Paciente temporal', apellidos: 'Prueba' }) });
+      assert.equal(patient.status, 201);
+      personId = (await patient.json()).id;
       await AppDataSource.getRepository(UsuarioSchema).save({ id: userId, sucursalId: saved.id, nombre: 'Usuario temporal', correo: `${userId}@example.test`, password: 'hash-temporal', rol: 'recepcion' });
       const detail = await fetch(`${base}/${saved.id}`);
       assert.equal(detail.status, 200);
@@ -49,6 +55,20 @@ test('registro y edicion de sucursales en PostgreSQL', async (t) => {
       assert.equal((await repository.findOneByOrFail({ id: saved.id })).direccion, 'Nueva direccion');
       assert.equal((await AppDataSource.getRepository(PacienteSchema).findOneByOrFail({ id: personId })).sucursalId, saved.id);
       assert.equal((await AppDataSource.getRepository(UsuarioSchema).findOneByOrFail({ id: userId })).sucursalId, saved.id);
+    });
+    await t.test('bloquea nuevas asignaciones a una sucursal inactiva y conserva las existentes', async () => {
+      const active = await (await fetch(`${base}?estatus=activo`)).json();
+      assert.ok(active.every((branch) => branch.id !== saved.id));
+      const form = { sucursalId: saved.id, nombre: 'Paciente temporal', apellidos: 'Prueba' };
+      const sendPatient = (path, method, body) => fetch(`${patientsUrl}${path}`, { method,
+        headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const rejected = await sendPatient('', 'POST', form);
+      assert.equal(rejected.status, 400);
+      assert.equal((await rejected.json()).message, 'La sucursal esta inactiva.');
+      const edited = await sendPatient(`/${personId}`, 'PUT', { ...form, telefono: '6681234567' });
+      assert.equal(edited.status, 200);
+      assert.equal((await edited.json()).sucursalId, saved.id);
+      assert.equal(await AppDataSource.getRepository(PacienteSchema).countBy({ sucursalId: saved.id }), 1);
     });
     await t.test('filtra estados y conserva campos usados por pacientes', async () => {
       const response = await fetch(`${base}?estatus=inactivo`);
@@ -75,7 +95,7 @@ test('registro y edicion de sucursales en PostgreSQL', async (t) => {
       assert.equal((await fetch(`${base}?estatus=desconocido`)).status, 400);
     });
   } finally {
-    await AppDataSource.getRepository(PacienteSchema).delete(personId);
+    if (personId) await AppDataSource.getRepository(PacienteSchema).delete(personId);
     await AppDataSource.getRepository(UsuarioSchema).delete(userId);
     for (const id of ids) await repository.delete(id);
     await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));

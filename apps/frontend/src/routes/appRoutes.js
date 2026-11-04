@@ -25,6 +25,11 @@ export const appRoutes = [
     module: 'Laboratorio',
   },
   {
+    label: 'Solicitudes',
+    path: '/solicitudes-estudios',
+    module: 'Recepcion',
+  },
+  {
     label: 'Punto de venta',
     path: '/punto-venta',
     module: 'Finanzas',

@@ -1,5 +1,8 @@
 # Avance de solicitud de estudios
 
+Este documento describe el borrador inicial del 4 de noviembre. El guardado
+posterior se documenta en [Integracion de solicitudes](../api/integracion-solicitudes-estudios.md).
+
 La pantalla `/solicitudes-estudios` consulta los pacientes y servicios existentes.
 Permite buscar un paciente por nombre, seleccionar registros activos y revisar
 el costo del servicio antes de preparar un borrador. La revision permite volver

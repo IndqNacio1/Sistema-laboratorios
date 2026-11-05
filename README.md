@@ -39,6 +39,7 @@ npm run dev:backend
 - [Integracion del catalogo de servicios](docs/api/integracion-servicios.md)
 - [Integracion de sucursales](docs/api/integracion-sucursales.md)
 - [Avance de solicitud de estudios](docs/planeaciones/avance-2026-11-04-solicitud-estudios.md)
+- [Guardado de solicitudes de estudios](docs/api/integracion-solicitudes-estudios.md)
 - [Reglas de acceso por rol](docs/api/reglas-acceso-roles.md)
 - [Diccionario de datos inicial](docs/modelos/diccionario-datos-inicial.md)
 - [Base local de PostgreSQL](docs/modelos/base-local-postgresql.md)

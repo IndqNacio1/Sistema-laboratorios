@@ -1,3 +1,5 @@
+import { clearSession, getSessionToken } from './session.js';
+
 const apiUrl = (import.meta.env?.VITE_API_URL || 'http://localhost:3000/api').replace(/\/$/, '');
 
 export async function requestJson(path, { method = 'GET', body, signal, conflictMessage } = {}) {
@@ -7,15 +9,19 @@ export async function requestJson(path, { method = 'GET', body, signal, conflict
   signal?.addEventListener('abort', abort, { once: true });
   if (signal?.aborted) controller.abort();
   try {
+    const token = getSessionToken();
     const response = await fetch(`${apiUrl}${path}`, {
       method,
-      headers: { Accept: 'application/json', ...(body ? { 'Content-Type': 'application/json' } : {}) },
+      headers: { Accept: 'application/json', ...(body ? { 'Content-Type': 'application/json' } : {}), ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       ...(body ? { body: JSON.stringify(body) } : {}),
       signal: controller.signal,
     });
     const data = await response.json().catch(() => null);
     if (!response.ok) {
-      if (response.status === 401) throw new Error('Tu sesion no es valida. Inicia sesion nuevamente.');
+      if (response.status === 401) {
+        clearSession();
+        throw Object.assign(new Error('Tu sesion no es valida. Inicia sesion nuevamente.'), { status: 401 });
+      }
       if (response.status === 403) throw new Error('No tienes permiso para realizar esta accion.');
       if (response.status === 409 && conflictMessage) throw new Error(conflictMessage);
       throw new Error(data?.message || data?.mensaje || 'No se pudo completar la solicitud.');

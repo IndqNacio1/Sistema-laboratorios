@@ -1,7 +1,7 @@
 import React from 'react';
 import { appRoutes } from '../routes/appRoutes.js';
 
-function AppShell({ children, title = 'Resumen operativo', subtitle = 'Panel administrativo' }) {
+function AppShell({ children, title = 'Resumen operativo', subtitle = 'Panel administrativo', branchName = 'Sucursal matriz' }) {
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900">
       <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-slate-200 bg-white px-5 py-6 lg:block">
@@ -31,7 +31,7 @@ function AppShell({ children, title = 'Resumen operativo', subtitle = 'Panel adm
               <h2 className="text-lg font-semibold">{title}</h2>
             </div>
             <div className="text-right text-sm text-slate-500">
-              <p>Sucursal matriz</p>
+              <p>{branchName}</p>
               <p>Turno matutino</p>
             </div>
           </div>

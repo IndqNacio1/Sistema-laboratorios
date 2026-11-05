@@ -5,8 +5,10 @@ import PatientsPage from './pages/PatientsPage.jsx';
 import ServicesPage from './pages/ServicesPage.jsx';
 import BranchesPage from './pages/BranchesPage.jsx';
 import StudyRequestPage from './pages/StudyRequestPage.jsx';
+import LoginPage from './pages/LoginPage.jsx';
 
 function App() {
+  if (window.location.pathname === '/login') return <LoginPage />;
   if (window.location.pathname === '/solicitudes-estudios') {
     return <StudyRequestPage />;
   }

@@ -6,12 +6,15 @@ import jwt from 'jsonwebtoken';
 export const login = async (req, res) => {
     try {
         const { correo, password } = req.body;
+        if (typeof correo !== 'string' || typeof password !== 'string' || !correo.trim() || !password) {
+            return res.status(400).json({ message: 'Correo y contrasena son obligatorios.' });
+        }
         const usuarioRepository = AppDataSource.getRepository(UsuarioSchema);
         
         // 1. Buscamos si el correo existe en la base de datos
         const usuario = await usuarioRepository.createQueryBuilder('usuario')
             .addSelect('usuario.password')
-            .where('lower(usuario.correo) = lower(:correo)', { correo })
+            .where('lower(usuario.correo) = lower(:correo)', { correo: correo.trim() })
             .getOne();
         if (!usuario) {
             return res.status(404).json({ message: "Usuario no encontrado" });

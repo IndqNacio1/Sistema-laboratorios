@@ -9,6 +9,12 @@ import inventarioRoutes from './routes/inventario.routes.js';
 import ventaRoutes from './routes/venta.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import errorHandler from './middlewares/errorHandler.js'; // Convertido a import y con extensión .js
+import sucursalRoutes from "./routes/sucursal.routes.js";
+import { conectarMongoDB } from "./config/mongo.js";
+import { verificarToken } from "./middlewares/auth.middleware.js";
+import pagoRoutes from "./routes/pago.routes.js";
+import reporteRoutes from "./routes/reporte.routes.js";
+
 
 const app = express();
 
@@ -18,9 +24,9 @@ const app = express();
 
 // Configurar CORS
 app.use(cors({
-  origin: 'http://localhost:4200', 
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
+    origin: ["http://localhost:4200", "http://localhost:5173"], 
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true
 }));
 
 // Configurar Rate Limiting
@@ -45,12 +51,16 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-app.use('/api/usuarios', usuarioRoutes);
-app.use('/api/pacientes', pacienteRoutes);
-app.use('/api/estudios', estudioRoutes);
-app.use('/api/inventarios', inventarioRoutes);
-app.use('/api/ventas', ventaRoutes);
-app.use('/api/auth', authRoutes);
+app.use("/api/auth", authRoutes); // Libre
+
+app.use("/api/usuarios", verificarToken, usuarioRoutes);
+app.use("/api/pacientes", verificarToken, pacienteRoutes);
+app.use("/api/estudios", verificarToken, estudioRoutes);
+app.use("/api/inventarios", verificarToken, inventarioRoutes);
+app.use("/api/ventas", verificarToken, ventaRoutes);
+app.use("/api/sucursales", verificarToken, sucursalRoutes);
+app.use("/api/pagos", verificarToken, pagoRoutes);
+app.use("/api/reportes", verificarToken, reporteRoutes);
 
 // ==========================================
 // 3. MANEJADOR DE ERRORES (Siempre al final de las rutas)
@@ -63,6 +73,8 @@ app.use(errorHandler);
 AppDataSource.initialize()
     .then(() => {
         console.log("¡Conexión a la base de datos PostgreSQL exitosa!");
+        // Conectar a MongoDB para logs
+        conectarMongoDB();
     })
     .catch((error) => {
         console.error("Error al conectar a la base de datos:", error);

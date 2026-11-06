@@ -8,6 +8,8 @@ export const EstudioSchema = new EntitySchema({
         nombre: { type: "varchar", length: 150 },
         descripcion: { type: "text", nullable: true },
         precio: { type: "decimal", precision: 10, scale: 2 },
+        ruta_pdf: { type: "varchar", nullable: true }, // <-- Columna para el archivo
+        estatus: { type: "varchar", default: "Pendiente", nullable: true }, // <-- Columna para el estado
         created_at: { type: "timestamp", createDate: true },
         updated_at: { type: "timestamp", updateDate: true }
     }

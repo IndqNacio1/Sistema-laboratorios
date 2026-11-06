@@ -24,15 +24,34 @@ export const createEstudio = async (req, res) => {
 
 export const subirResultadoEstudio = async (req, res, next) => {
   try {
+    const { id } = req.params; // Obtenemos el ID de la URL
+
     // Si multer funcionó, el archivo vendrá en req.file
     if (!req.file) {
       return res.status(400).json({ success: false, message: 'No se subió ningún archivo PDF' });
     }
     
-    // Aquí después guardarías la ruta req.file.path en tu base de datos ligada al Estudio
+    const estudioRepository = AppDataSource.getRepository(EstudioSchema);
+    
+    // 1. Buscamos el estudio en la base de datos
+    const estudio = await estudioRepository.findOne({ where: { id: id } });
+    
+    if (!estudio) {
+      return res.status(404).json({ success: false, message: 'El estudio indicado no existe' });
+    }
+
+    // 2. Guardamos la ruta del archivo en el registro
+    estudio.ruta_pdf = req.file.path; 
+    
+    // Opcional: Cambiar el estatus del estudio para indicar que ya tiene resultados
+    estudio.estatus = 'Completado'; 
+
+    // 3. Guardamos los cambios en PostgreSQL
+    await estudioRepository.save(estudio);
+    
     res.status(200).json({
       success: true,
-      message: 'Archivo subido correctamente',
+      message: 'Archivo subido y vinculado correctamente al expediente',
       data: req.file
     });
   } catch (error) {

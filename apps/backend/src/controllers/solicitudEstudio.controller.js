@@ -7,6 +7,39 @@ const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const fail = (status, message) => Object.assign(new Error(message), { status });
 const activeBranch = (branch) => branch?.estatus === 'activo' && (!branch.expiresAt || new Date(branch.expiresAt) > new Date());
 
+export async function listSolicitudes(req, res) {
+  if (!readRoles.includes(req.user.rol)) return res.status(403).json({ message: 'No tienes permiso para consultar solicitudes.' });
+  const { search = '', estado = '', page = '1', limit = '20' } = req.query;
+  if (typeof search !== 'string' || search.length > 100 || typeof estado !== 'string'
+    || (estado && !['pendiente', 'en_proceso', 'completado', 'cancelado'].includes(estado))
+    || typeof page !== 'string' || !/^[1-9]\d{0,5}$/.test(page)
+    || typeof limit !== 'string' || !/^[1-9]\d?$/.test(limit) || Number(limit) > 50) {
+    return res.status(400).json({ message: 'Los filtros o la paginacion no son validos.' });
+  }
+  try {
+    const branch = await AppDataSource.getRepository(SucursalSchema).findOneBy({ id: req.user.sucursalId });
+    if (!activeBranch(branch)) return res.status(403).json({ message: 'Tu sucursal no esta activa.' });
+    const query = AppDataSource.getRepository(EstudioPacienteSchema).createQueryBuilder('estudio')
+      .innerJoin(PacienteSchema, 'paciente', 'paciente.id = estudio.pacienteId')
+      .innerJoin(ServicioSchema, 'servicio', 'servicio.id = estudio.servicioId');
+    if (req.user.rol !== 'administrador') query.andWhere('paciente.sucursalId = :sucursalId', { sucursalId: req.user.sucursalId });
+    if (estado) query.andWhere('estudio.estado = :estado', { estado });
+    if (search.trim()) query.andWhere("(strpos(lower(concat_ws(' ', paciente.nombre, paciente.apellidos)), lower(:search)) > 0 OR strpos(lower(servicio.nombre), lower(:search)) > 0 OR strpos(cast(estudio.id as text), lower(:search)) > 0)", { search: search.trim() });
+    const total = await query.getCount();
+    const items = await query.select('estudio.id', 'id').addSelect('estudio.fecha', 'fecha')
+      .addSelect('estudio.estado', 'estado').addSelect('estudio.pacienteId', 'pacienteId')
+      .addSelect('estudio.servicioId', 'servicioId').addSelect('paciente.sucursalId', 'sucursalId')
+      .addSelect("concat_ws(' ', paciente.nombre, paciente.apellidos)", 'paciente')
+      .addSelect('servicio.nombre', 'servicio')
+      .orderBy('estudio.fecha', 'DESC').addOrderBy('estudio.id', 'DESC')
+      .offset((Number(page) - 1) * Number(limit)).limit(Number(limit)).getRawMany();
+    res.json({ items, total, page: Number(page), limit: Number(limit),
+      usuario: { id: req.user.id, nombre: req.user.nombre, rol: req.user.rol, sucursalId: branch.id, sucursalNombre: branch.nombre } });
+  } catch {
+    res.status(500).json({ message: 'No se pudieron consultar las solicitudes.' });
+  }
+}
+
 export async function getSolicitudOptions(req, res) {
   if (!roles.includes(req.user.rol)) return res.status(403).json({ message: 'No tienes permiso para registrar solicitudes.' });
   try {

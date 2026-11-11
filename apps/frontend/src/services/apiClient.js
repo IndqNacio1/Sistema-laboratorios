@@ -2,7 +2,7 @@ import { clearSession, getSessionToken } from './session.js';
 
 const apiUrl = (import.meta.env?.VITE_API_URL || 'http://localhost:3000/api').replace(/\/$/, '');
 
-export async function requestJson(path, { method = 'GET', body, signal, conflictMessage } = {}) {
+export async function requestJson(path, { method = 'GET', body, signal, conflictMessage, unauthorizedMessage, forbiddenMessage } = {}) {
   const controller = new AbortController();
   const abort = () => controller.abort();
   const timeout = setTimeout(abort, 15000);
@@ -20,9 +20,9 @@ export async function requestJson(path, { method = 'GET', body, signal, conflict
     if (!response.ok) {
       if (response.status === 401) {
         clearSession();
-        throw Object.assign(new Error('Tu sesion no es valida. Inicia sesion nuevamente.'), { status: 401 });
+        throw Object.assign(new Error(unauthorizedMessage || 'Tu sesion no es valida. Inicia sesion nuevamente.'), { status: 401 });
       }
-      if (response.status === 403) throw new Error('No tienes permiso para realizar esta accion.');
+      if (response.status === 403) throw Object.assign(new Error(forbiddenMessage || 'No tienes permiso para realizar esta accion.'), { status: 403 });
       if (response.status === 409 && conflictMessage) throw new Error(conflictMessage);
       throw new Error(data?.message || data?.mensaje || 'No se pudo completar la solicitud.');
     }

@@ -26,7 +26,7 @@ export const appRoutes = [
   },
   {
     label: 'Solicitudes',
-    path: '/solicitudes-estudios',
+    path: '/solicitudes-estudios/listado',
     module: 'Recepcion',
   },
   {

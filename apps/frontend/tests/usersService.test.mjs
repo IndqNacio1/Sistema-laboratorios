@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { afterEach, test } from 'node:test';
-import { createUser, getUserPayload, getUsers } from '../src/services/usersService.js';
+import { createUser, getRegistrationOptions, getUserPayload, getUsers } from '../src/services/usersService.js';
 
 const originalFetch = globalThis.fetch;
 afterEach(() => { globalThis.fetch = originalFetch; });
@@ -24,8 +24,8 @@ test('acepta una lista vacia y rechaza respuestas incompatibles', async () => {
 });
 
 test('registra con los nombres de campos del controlador sin datos de sucursal inventados', async () => {
-  const values = { nombre: ' Ana ', correo: ' ana@example.test ', password: 'clave1234', rol: 'recepcion', estado: 'Activo' };
-  const expected = { nombre: 'Ana', correo: 'ana@example.test', password: 'clave1234', rol: 'recepcion' };
+  const values = { nombre: ' Ana ', apellidos: ' Lopez ', correo: ' ana@example.test ', password: 'clave1234', rol: 'recepcion', sucursalId: 's1', confirmPassword: 'no-se-envia', estado: 'Activo' };
+  const expected = { nombre: 'Ana', apellidos: 'Lopez', correo: 'ana@example.test', password: 'clave1234', rol: 'recepcion', sucursalId: 's1' };
   assert.deepEqual(getUserPayload(values), expected);
   globalThis.fetch = async (url, options) => {
     assert.equal(options.method, 'POST');
@@ -36,6 +36,14 @@ test('registra con los nombres de campos del controlador sin datos de sucursal i
   const created = await createUser(values);
   assert.equal(created.id, 'u2');
   assert.equal('password' in created, false);
+});
+
+test('consulta opciones del registro y rechaza respuestas incompletas', async () => {
+  const data = { sucursales: [{ id: 's1', nombre: 'Matriz' }], roles: ['recepcion'] };
+  globalThis.fetch = async (url) => { assert.ok(url.endsWith('/usuarios/opciones-registro')); return Response.json(data); };
+  assert.deepEqual(await getRegistrationOptions(), data);
+  globalThis.fetch = async () => Response.json({ roles: [] });
+  await assert.rejects(getRegistrationOptions(), /opciones de registro/);
 });
 
 test('reporta duplicados, permisos y errores del servidor', async () => {

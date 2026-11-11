@@ -69,6 +69,50 @@ test('solicitudes clinicas autenticadas y limitadas por sucursal', async (t) => 
       assert.equal((await send('/' + other.id)).status, 403);
       assert.equal((await send('/' + other.id, 'GET', null, token(adminId))).status, 200);
     });
+    await t.test('lista registros persistidos por sucursal, rol y filtros sin exponer resultados', async () => {
+      assert.equal((await send('', 'GET', null, null)).status, 401);
+      const own = await (await send('')).json();
+      assert.equal(own.total, 2);
+      assert.ok(own.items.every((item) => item.sucursalId === branchA));
+      assert.ok(own.items.every((item) => item.paciente === 'Paciente A Temporal' && item.servicio === 'Servicio temporal'));
+      assert.ok(own.items.every((item) => !('resultado' in item) && !('usuarioId' in item)));
+      const admin = await (await send('?search=' + serviceId, 'GET', null, token(adminId))).json();
+      assert.equal(admin.total, 0);
+      const global = await (await send('?search=Servicio%20temporal', 'GET', null, token(adminId))).json();
+      assert.ok(global.items.some((item) => item.pacienteId === patientB));
+      const supervisor = await (await send('', 'GET', null, token(supervisorId))).json();
+      assert.equal(supervisor.total, 2);
+      assert.equal((await (await send('?search=Paciente%20B')).json()).total, 0);
+      assert.equal((await (await send('?search=' + own.items[0].id)).json()).total, 1);
+      assert.equal((await (await send('?search=%25')).json()).total, 0);
+      assert.equal((await (await send('?estado=completado')).json()).total, 0);
+      const first = await (await send('?limit=1&page=1&estado=pendiente')).json();
+      const second = await (await send('?limit=1&page=2&estado=pendiente')).json();
+      assert.equal(first.total, 2);
+      assert.equal(first.items.length, 1);
+      assert.notEqual(first.items[0].id, second.items[0].id);
+      const reloaded = await (await send('?limit=1&page=1&estado=pendiente')).json();
+      assert.equal(reloaded.items[0].id, first.items[0].id);
+      assert.deepEqual((await (await send('?page=3&limit=1')).json()).items, []);
+      await manager.getRepository(PacienteSchema).update(patientA, { estatus: 'inactivo' });
+      assert.equal((await (await send('')).json()).total, 2);
+      await manager.getRepository(PacienteSchema).update(patientA, { estatus: 'activo' });
+    });
+    await t.test('valida filtros y aplica los permisos actuales al listado', async () => {
+      for (const query of ['?estado=otro', '?page=0', '?limit=51', '?page=1.5', '?search=a&search=b', '?search=' + 'a'.repeat(101)]) {
+        assert.equal((await send(query)).status, 400, query);
+      }
+      const adminToken = token(adminId);
+      await manager.getRepository(UsuarioSchema).update(adminId, { rol: 'supervisor' });
+      assert.equal((await (await send('?search=Paciente%20A', 'GET', null, adminToken)).json()).total, 0);
+      await manager.getRepository(UsuarioSchema).update(adminId, { rol: 'administrador' });
+      await manager.getRepository(UsuarioSchema).update(userId, { estatus: 'inactivo' });
+      assert.equal((await send('')).status, 401);
+      await manager.getRepository(UsuarioSchema).update(userId, { estatus: 'activo' });
+      await manager.getRepository(SucursalSchema).update(branchA, { estatus: 'inactivo' });
+      assert.equal((await send('')).status, 403);
+      await manager.getRepository(SucursalSchema).update(branchA, { estatus: 'activo' });
+    });
     await t.test('revalida paciente y servicio al guardar', async () => {
       await manager.getRepository(PacienteSchema).update(patientA, { estatus: 'inactivo' });
       assert.equal((await send('', 'POST', form)).status, 400);

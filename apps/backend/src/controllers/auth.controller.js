@@ -1,44 +1,40 @@
 import { AppDataSource } from '../config/db.js';
-import { UsuarioSchema } from '../entities/Usuario.js';
+import { UsuarioSchema, SucursalSchema } from '../entities/Laboratorio.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-export const login = async (req, res) => {
-    try {
-        const { correo, password } = req.body;
-        if (typeof correo !== 'string' || typeof password !== 'string' || !correo.trim() || !password) {
-            return res.status(400).json({ message: 'Correo y contrasena son obligatorios.' });
-        }
-        const usuarioRepository = AppDataSource.getRepository(UsuarioSchema);
-        
-        // 1. Buscamos si el correo existe en la base de datos
-        const usuario = await usuarioRepository.createQueryBuilder('usuario')
-            .addSelect('usuario.password')
-            .where('lower(usuario.correo) = lower(:correo)', { correo: correo.trim() })
-            .getOne();
-        if (!usuario) {
-            return res.status(404).json({ message: "Usuario no encontrado" });
-        }
-        if (usuario.estatus !== 'activo') {
-            return res.status(403).json({ message: 'Usuario inactivo' });
-        }
+const activeBranch = (branch) => branch?.estatus === 'activo' && (!branch.expiresAt || new Date(branch.expiresAt) > new Date());
 
-        // 2. Comparamos la contraseña escrita con la encriptada en la base de datos
-        const isMatch = await bcrypt.compare(password, usuario.password);
-        if (!isMatch) {
-            return res.status(400).json({ message: "Contraseña incorrecta" });
-        }
-
-        // 3. Si todo está bien, generamos el Token JWT (válido por 2 horas)
-        const token = jwt.sign(
-            { id: usuario.id, rol: usuario.rol },
-            process.env.JWT_SECRET,
-            { expiresIn: '2h' }
-        );
-
-        res.json({ mensaje: "Login exitoso", token });
-    } catch (error) {
-        console.error("Error en login:", error);
-        res.status(500).json({ message: "Error al iniciar sesión" });
+export async function login(req, res) {
+  const { correo, password } = req.body || {};
+  if (typeof correo !== 'string' || correo.trim().length > 100 || !correo.trim()
+    || typeof password !== 'string' || !password || Buffer.byteLength(password, 'utf8') > 72) {
+    return res.status(400).json({ message: 'Escribe un correo y una contrasena validos.' });
+  }
+  try {
+    const usuario = await AppDataSource.getRepository(UsuarioSchema).createQueryBuilder('usuario')
+      .addSelect('usuario.password').where('lower(usuario.correo) = lower(:correo)', { correo: correo.trim() }).getOne();
+    if (!usuario || !await bcrypt.compare(password, usuario.password)) {
+      return res.status(401).json({ message: 'Correo o contrasena incorrectos.' });
     }
-};
+    const branch = await AppDataSource.getRepository(SucursalSchema).findOneBy({ id: usuario.sucursalId });
+    if (usuario.estatus !== 'activo' || !activeBranch(branch)) {
+      return res.status(403).json({ message: 'Tu cuenta o sucursal no esta disponible. Contacta al administrador.' });
+    }
+    const token = jwt.sign({ id: usuario.id, rol: usuario.rol }, process.env.JWT_SECRET, { expiresIn: '2h', algorithm: 'HS256' });
+    res.json({ mensaje: 'Login exitoso', token });
+  } catch {
+    res.status(500).json({ message: 'No se pudo iniciar sesion. Intenta nuevamente.' });
+  }
+}
+
+export async function getSession(req, res) {
+  try {
+    const branch = await AppDataSource.getRepository(SucursalSchema).findOneBy({ id: req.user.sucursalId });
+    if (!activeBranch(branch)) return res.status(403).json({ message: 'Tu sucursal no esta disponible.' });
+    const { id, nombre, apellidos, correo, rol, sucursalId } = req.user;
+    res.json({ id, nombre, apellidos, correo, rol, sucursalId, sucursalNombre: branch.nombre });
+  } catch {
+    res.status(503).json({ message: 'No se pudo consultar tu cuenta.' });
+  }
+}

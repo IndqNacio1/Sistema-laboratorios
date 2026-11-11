@@ -63,6 +63,7 @@ export default function StudyRequestPage() {
     <AppShell title="Solicitud de estudios" subtitle="Recepcion" branchName={options?.usuario?.sucursalNombre || 'Sin sesion'}>
       <section className="border-y border-slate-200 bg-white p-4 sm:p-5">
         <h3 className="text-base font-semibold">{draft ? 'Revision de solicitud' : 'Nueva solicitud'}</h3>
+        <a href="/solicitudes-estudios/listado" className="mt-2 inline-block text-sm underline">Ver solicitudes</a>
         {options?.usuario && <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-sm text-slate-600"><span>{options.usuario.nombre}</span><button type="button" disabled={saving} className="underline" onClick={() => { clearSession(); window.location.assign('/login'); }}>Cerrar sesion</button></div>}
         {needsLogin ? <p className="mt-4 text-sm"><a href="/login" className="font-medium underline">Iniciar sesion</a></p> : loadError ? (
           <div role="alert" className="mt-4 rounded bg-red-50 p-3 text-sm text-red-800">

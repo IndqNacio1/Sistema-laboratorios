@@ -16,7 +16,15 @@ export function getUserPayload(formValues) {
   return {
     nombre: formValues.nombre.trim(), correo: formValues.correo.trim(),
     password: formValues.password, rol: formValues.rol,
+    ...(formValues.sucursalId ? { sucursalId: formValues.sucursalId } : {}),
+    ...(formValues.apellidos ? { apellidos: formValues.apellidos.trim() } : {}),
   };
+}
+
+export async function getRegistrationOptions(options) {
+  const data = await requestJson('/usuarios/opciones-registro', options);
+  if (!Array.isArray(data?.sucursales) || !Array.isArray(data?.roles)) throw new Error('No se pudieron cargar las opciones de registro.');
+  return data;
 }
 
 export async function createUser(formValues) {

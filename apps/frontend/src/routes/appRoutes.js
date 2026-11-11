@@ -15,9 +15,19 @@ export const appRoutes = [
     module: 'Recepcion',
   },
   {
-    label: 'Estudios',
-    path: '/estudios',
+    label: 'Sucursales',
+    path: '/sucursales',
+    module: 'Administracion',
+  },
+  {
+    label: 'Servicios',
+    path: '/servicios',
     module: 'Laboratorio',
+  },
+  {
+    label: 'Solicitudes',
+    path: '/solicitudes-estudios/listado',
+    module: 'Recepcion',
   },
   {
     label: 'Punto de venta',

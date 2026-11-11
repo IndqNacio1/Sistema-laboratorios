@@ -2,6 +2,9 @@
 
 Este documento define los contratos iniciales para la gestion de usuarios. No representa implementacion final, solo una base para alinear frontend, backend y reglas de negocio.
 
+Para las rutas ya implementadas, consultar [Inicio de sesion y creacion de cuentas](inicio-sesion-cuentas.md)
+y [Integracion del frontend de usuarios](integracion-usuarios-frontend.md).
+
 ## GET /usuarios
 
 Consulta usuarios registrados.

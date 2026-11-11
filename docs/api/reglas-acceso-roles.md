@@ -70,7 +70,6 @@ Este documento define las reglas iniciales de acceso por rol para las pantallas 
 ## Pendientes
 
 - Definir permisos finales por endpoint.
-- Definir middleware de autenticacion.
-- Definir middleware de autorizacion por rol.
+- Extender a los demas modulos la autenticacion y autorizacion ya implementadas en usuarios y solicitudes de estudios.
 - Definir reglas especificas para sucursales.
 - Validar permisos contra los wireframes finales.

@@ -2,6 +2,11 @@
 
 Este documento define los contratos iniciales de solicitud y respuesta para el modulo de autenticacion. Sirve como referencia para alinear frontend y backend antes de implementar los endpoints definitivos.
 
+Implementacion vigente: [Inicio de sesion y creacion de cuentas](inicio-sesion-cuentas.md).
+El endpoint real es /api/auth/login, recibe password y devuelve mensaje y token.
+La identidad se consulta por separado en GET /api/auth/me. Los ejemplos siguientes
+se conservan como propuesta inicial, no como contrato de los endpoints actuales.
+
 ## POST /auth/login
 
 Permite iniciar sesion en el sistema.

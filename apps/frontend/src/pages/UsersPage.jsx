@@ -1,202 +1,70 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DataTable from '../components/DataTable.jsx';
 import StatCard from '../components/StatCard.jsx';
 import AppShell from '../layouts/AppShell.jsx';
-import { emptyUserForm, userActions, userFilterOptions, userStats, users } from '../data/usersData.js';
+import { userRoles } from '../data/usersData.js';
+import { getUsers } from '../services/usersService.js';
+import { getCurrentUser } from '../services/authService.js';
 
-const userColumns = [
-  { key: 'id', label: 'ID' },
+const roleLabel = (role) => userRoles.find((item) => item.value === role)?.label || role;
+const columns = [
   { key: 'nombre', label: 'Nombre' },
   { key: 'correo', label: 'Correo' },
-  { key: 'rol', label: 'Rol' },
-  { key: 'sucursal', label: 'Sucursal' },
-  { key: 'estado', label: 'Estado' },
+  { key: 'rol', label: 'Rol', render: roleLabel },
 ];
 
-function UsersPage() {
-  const [filters, setFilters] = useState({
-    rol: 'Todos',
-    estado: 'Todos',
-    sucursal: 'Todas',
-  });
+export default function UsersPage() {
+  const [users, setUsers] = useState([]);
+  const [current, setCurrent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [needsLogin, setNeedsLogin] = useState(false);
+  const [revision, setRevision] = useState(0);
+  const [role, setRole] = useState('');
+  const [search, setSearch] = useState('');
 
-  const filteredUsers = useMemo(
-    () =>
-      users.filter((user) => {
-        const matchesRole = filters.rol === 'Todos' || user.rol === filters.rol;
-        const matchesStatus = filters.estado === 'Todos' || user.estado === filters.estado;
-        const matchesBranch = filters.sucursal === 'Todas' || user.sucursal === filters.sucursal;
+  useEffect(() => {
+    const controller = new AbortController();
+    setLoading(true);
+    setError('');
+    setUsers([]);
+    setCurrent(null);
+    Promise.all([getUsers({ signal: controller.signal }), getCurrentUser({ signal: controller.signal })])
+      .then(([rows, user]) => { if (!controller.signal.aborted) { setUsers(rows); setCurrent(user); setNeedsLogin(false); } })
+      .catch((failure) => { if (!controller.signal.aborted) { setError(failure.message); setNeedsLogin(failure.status === 401); } })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, [revision]);
 
-        return matchesRole && matchesStatus && matchesBranch;
-      }),
-    [filters],
-  );
-
-  const handleFilterChange = (field, value) => {
-    setFilters((currentFilters) => ({
-      ...currentFilters,
-      [field]: value,
-    }));
-  };
+  const filtered = users.filter((user) => (!role || user.rol === role) && `${user.nombre} ${user.correo}`.toLowerCase().includes(search.trim().toLowerCase()));
+  const stats = [
+    { label: 'Usuarios', value: users.length },
+    { label: 'Administradores', value: users.filter((user) => user.rol === 'administrador').length },
+    { label: 'Recepcion', value: users.filter((user) => user.rol === 'recepcion').length },
+  ];
 
   return (
-    <AppShell title="Gestion de usuarios" subtitle="Modulo administrador">
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {userStats.map((stat) => (
-          <StatCard key={stat.label} {...stat} />
-        ))}
-      </section>
-
-      <section className="mt-6 rounded border border-slate-200 bg-white p-4 shadow-sm">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <h3 className="text-base font-semibold">Usuarios del sistema</h3>
-            <p className="mt-1 text-sm text-slate-500">
-              Informacion simulada para preparar la administracion de cuentas.
-            </p>
-          </div>
-
-          <button className="rounded bg-slate-900 px-4 py-2 text-sm font-medium text-white">
-            Nuevo usuario
-          </button>
-        </div>
-
-        <div className="mt-4 grid gap-3 md:grid-cols-3">
-          <label className="block rounded border border-slate-200 px-3 py-2">
-            <span className="text-xs uppercase text-slate-500">Rol</span>
-            <select
-              className="mt-1 w-full bg-transparent text-sm font-medium text-slate-800 outline-none"
-              value={filters.rol}
-              onChange={(event) => handleFilterChange('rol', event.target.value)}
-            >
-              {userFilterOptions.roles.map((role) => (
-                <option key={role}>{role}</option>
-              ))}
-            </select>
-          </label>
-
-          <label className="block rounded border border-slate-200 px-3 py-2">
-            <span className="text-xs uppercase text-slate-500">Estado</span>
-            <select
-              className="mt-1 w-full bg-transparent text-sm font-medium text-slate-800 outline-none"
-              value={filters.estado}
-              onChange={(event) => handleFilterChange('estado', event.target.value)}
-            >
-              {userFilterOptions.estados.map((status) => (
-                <option key={status}>{status}</option>
-              ))}
-            </select>
-          </label>
-
-          <label className="block rounded border border-slate-200 px-3 py-2">
-            <span className="text-xs uppercase text-slate-500">Sucursal</span>
-            <select
-              className="mt-1 w-full bg-transparent text-sm font-medium text-slate-800 outline-none"
-              value={filters.sucursal}
-              onChange={(event) => handleFilterChange('sucursal', event.target.value)}
-            >
-              {userFilterOptions.sucursales.map((branch) => (
-                <option key={branch}>{branch}</option>
-              ))}
-            </select>
-          </label>
-        </div>
-
-        <div className="mt-4">
-          <DataTable columns={userColumns} rows={filteredUsers} />
-        </div>
-      </section>
-
-      <section className="mt-6 grid gap-6 xl:grid-cols-[1fr_360px]">
-        <div className="rounded border border-slate-200 bg-white p-4 shadow-sm">
-          <h3 className="text-base font-semibold">Acciones preparadas</h3>
-          <p className="mt-1 text-sm text-slate-500">
-            Opciones visuales para administrar usuarios cuando se conecte la API.
-          </p>
-
-          <div className="mt-4 grid gap-3 md:grid-cols-3">
-            {userActions.map((action) => (
-              <button
-                key={action}
-                className="rounded border border-slate-200 px-3 py-2 text-left text-sm font-medium text-slate-700 hover:bg-slate-50"
-              >
-                {action}
-              </button>
-            ))}
+    <AppShell title="Gestion de usuarios" subtitle="Modulo administrador" branchName={current?.sucursalNombre || 'Sin sesion'}>
+      <section className="grid gap-4 sm:grid-cols-3">{stats.map((stat) => <StatCard key={stat.label} {...stat} value={loading || error ? '--' : stat.value} />)}</section>
+      <section className="mt-6 border-y border-slate-200 bg-white py-4 sm:px-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h3 className="text-base font-semibold">Usuarios del sistema</h3>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" disabled={loading} onClick={() => setRevision((value) => value + 1)} className="rounded border border-slate-300 px-3 py-2 text-sm disabled:opacity-50">Actualizar</button>
+            {current?.rol === 'administrador' && <a href="/crear-cuenta" className="rounded bg-slate-900 px-4 py-2 text-sm font-medium text-white">Nuevo usuario</a>}
           </div>
         </div>
-
-        <aside className="rounded border border-slate-200 bg-white p-4 shadow-sm">
-          <h3 className="text-base font-semibold">Formulario base</h3>
-          <p className="mt-1 text-sm text-slate-500">Alta y edicion de usuarios.</p>
-
-          <form className="mt-4 space-y-3">
-            <label className="block">
-              <span className="text-xs font-medium uppercase text-slate-500">Nombre</span>
-              <input
-                className="mt-1 w-full rounded border border-slate-200 px-3 py-2 text-sm outline-none"
-                placeholder="Nombre completo"
-                defaultValue={emptyUserForm.nombre}
-              />
-            </label>
-
-            <label className="block">
-              <span className="text-xs font-medium uppercase text-slate-500">Correo</span>
-              <input
-                className="mt-1 w-full rounded border border-slate-200 px-3 py-2 text-sm outline-none"
-                placeholder="correo@laboratorio.com"
-                defaultValue={emptyUserForm.correo}
-              />
-            </label>
-
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-              <label className="block">
-                <span className="text-xs font-medium uppercase text-slate-500">Rol</span>
-                <select
-                  className="mt-1 w-full rounded border border-slate-200 px-3 py-2 text-sm outline-none"
-                  defaultValue={emptyUserForm.rol}
-                >
-                  {userFilterOptions.roles
-                    .filter((role) => role !== 'Todos')
-                    .map((role) => (
-                      <option key={role}>{role}</option>
-                    ))}
-                </select>
-              </label>
-
-              <label className="block">
-                <span className="text-xs font-medium uppercase text-slate-500">Estado</span>
-                <select
-                  className="mt-1 w-full rounded border border-slate-200 px-3 py-2 text-sm outline-none"
-                  defaultValue={emptyUserForm.estado}
-                >
-                  {userFilterOptions.estados
-                    .filter((status) => status !== 'Todos')
-                    .map((status) => (
-                      <option key={status}>{status}</option>
-                    ))}
-                </select>
-              </label>
-            </div>
-
-            <label className="block">
-              <span className="text-xs font-medium uppercase text-slate-500">Sucursal</span>
-              <select
-                className="mt-1 w-full rounded border border-slate-200 px-3 py-2 text-sm outline-none"
-                defaultValue={emptyUserForm.sucursal}
-              >
-                {userFilterOptions.sucursales
-                  .filter((branch) => branch !== 'Todas')
-                  .map((branch) => (
-                    <option key={branch}>{branch}</option>
-                  ))}
-              </select>
-            </label>
-          </form>
-        </aside>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <label className="block text-sm">Buscar<input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Nombre o correo" className="mt-1 w-full rounded border border-slate-300 px-3 py-2" /></label>
+          <label className="block text-sm">Rol<select aria-label="Rol" value={role} onChange={(event) => setRole(event.target.value)} className="mt-1 w-full rounded border border-slate-300 bg-white px-3 py-2"><option value="">Todos</option>{userRoles.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
+        </div>
+        <div className="mt-4" aria-busy={loading}>
+          {loading ? <p role="status" className="py-6 text-sm text-slate-600">Cargando usuarios...</p>
+            : needsLogin ? <p className="text-sm"><a href="/login?next=%2Fusuarios" className="underline">Iniciar sesion</a></p>
+              : error ? <div role="alert" className="rounded bg-red-50 p-3 text-sm text-red-800"><p>{error}</p><button type="button" className="mt-2 underline" onClick={() => setRevision((value) => value + 1)}>Reintentar</button><a href="/login?next=%2Fusuarios" className="ml-4 underline">Cambiar cuenta</a></div>
+                : <DataTable columns={columns} rows={filtered} emptyMessage={users.length ? 'No hay usuarios con los filtros seleccionados.' : 'No hay usuarios registrados.'} />}
+        </div>
       </section>
     </AppShell>
   );
 }
-
-export default UsersPage;

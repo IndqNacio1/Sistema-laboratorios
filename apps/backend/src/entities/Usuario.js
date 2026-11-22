@@ -1,13 +1,13 @@
 import { EntitySchema } from "typeorm";
 
 export const UsuarioSchema = new EntitySchema({
-    name: "Usuario", // Nombre del modelo en tu código
-    tableName: "usuarios", // El nombre EXACTO de la tabla en tu base de datos
+    name: "Usuario",
+    tableName: "usuarios",
     columns: {
         id: {
             primary: true,
             type: "uuid",
-            generated: "uuid", // Para que coincida con tu gen_random_uuid()
+            generated: "uuid",
         },
         nombre: {
             type: "varchar",
@@ -26,6 +26,10 @@ export const UsuarioSchema = new EntitySchema({
             type: "varchar",
             length: 50,
             default: "recepcionista",
+        },
+        activo: {
+            type: "boolean",
+            default: true,
         },
         created_at: {
             type: "timestamp",

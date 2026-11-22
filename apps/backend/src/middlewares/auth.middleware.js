@@ -1,25 +1,26 @@
 import jwt from "jsonwebtoken";
 
-// Clave secreta (por ahora aquí, después se pasa al archivo .env)
-const SECRET_KEY = process.env.JWT_SECRET || "secreto_super_seguro_laboratorio";
-
 export const verificarToken = (req, res, next) => {
-    const tokenHeader = req.headers["authorization"];
-
-    if (!tokenHeader) {
-        return res.status(403).json({ error: "No se proporcionó un token de acceso." });
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+        console.error("FATAL: JWT_SECRET no está configurado en .env");
+        return res.status(500).json({ error: "Error de configuración de seguridad en el servidor." });
     }
 
-    const token = tokenHeader.split(" ")[1]; // Separa "Bearer" del token real
+    const authHeader = req.headers["authorization"];
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({ error: "Token de acceso no proporcionado o formato Bearer inválido." });
+    }
 
+    const token = authHeader.split(" ")[1];
     if (!token) {
-        return res.status(403).json({ error: "Formato de token inválido." });
+        return res.status(401).json({ error: "Token vacío." });
     }
 
     try {
-        const decodificado = jwt.verify(token, SECRET_KEY);
-        req.usuario = decodificado; // Guardamos los datos del usuario para usarlos en los controladores
-        next(); // Permite que la petición continúe
+        const decodificado = jwt.verify(token, secret);
+        req.usuario = decodificado;
+        next();
     } catch (error) {
         return res.status(401).json({ error: "Token inválido o expirado." });
     }

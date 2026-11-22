@@ -1,14 +1,22 @@
 import { Router } from "express";
-import { crearSucursal, obtenerSucursales } from "../controllers/sucursal.controller.js";
-import { registrarAuditoria } from "../middlewares/auditoria.js"; // <-- Importamos el interceptor
+import {
+    crearSucursal,
+    obtenerSucursales,
+    obtenerSucursalPorId,
+    actualizarSucursal,
+    desactivarSucursal
+} from "../controllers/sucursal.controller.js";
+import { verificarToken } from "../middlewares/auth.middleware.js";
+import { autorizarRoles } from "../middlewares/autorizarRoles.js";
+import { registrarAuditoria } from "../middlewares/auditoria.js";
 
 const router = Router();
+const SOLO_ADMIN = autorizarRoles("admin", "administrador");
 
-// Le inyectamos el interceptor a la ruta de creación (POST)
-// Le pasamos el nombre del módulo: "Sucursales"
-router.post("/", registrarAuditoria("Sucursales"), crearSucursal);
-
-// La ruta GET no necesita auditoría porque solo es lectura
-router.get("/", obtenerSucursales);
+router.get("/", verificarToken, obtenerSucursales);
+router.get("/:id", verificarToken, obtenerSucursalPorId);
+router.post("/", verificarToken, SOLO_ADMIN, registrarAuditoria("Sucursales"), crearSucursal);
+router.put("/:id", verificarToken, SOLO_ADMIN, registrarAuditoria("Sucursales"), actualizarSucursal);
+router.delete("/:id", verificarToken, SOLO_ADMIN, registrarAuditoria("Sucursales"), desactivarSucursal);
 
 export default router;

@@ -5,6 +5,7 @@ export const EstudioSchema = new EntitySchema({
     tableName: "estudios",
     columns: {
         id: { primary: true, type: "uuid", generated: "uuid" },
+        codigo: { type: "varchar", length: 50, nullable: true },
         nombre: { type: "varchar", length: 150 },
         descripcion: { type: "text", nullable: true },
         precio: { type: "decimal", precision: 10, scale: 2 },

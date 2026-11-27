@@ -1,34 +1,35 @@
+import fs from 'fs';
 import multer from 'multer';
 import path from 'path';
 
-// 1. Configurar dónde y con qué nombre se guardan los archivos
+const uploadDir = path.resolve('uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    // La carpeta 'uploads/' debe existir en la raíz del proyecto
-    cb(null, 'uploads/'); 
+    cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
-    // Generar un nombre único: Fecha exacta + nombre original (evita que se sobreescriban)
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + '-' + file.originalname);
-  }
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    const safeName = file.originalname.replace(/\s+/g, '_');
+    cb(null, `${uniqueSuffix}-${safeName}`);
+  },
 });
 
-// 2. Filtro de seguridad (Solo aceptar PDFs)
 const fileFilter = (req, file, cb) => {
   if (file.mimetype === 'application/pdf') {
-    cb(null, true); // Acepta el archivo
+    cb(null, true);
   } else {
-    // Rechaza si intentan subir una imagen o un .exe
-    cb(new Error('Formato no válido. Solo se permiten archivos PDF.'), false); 
+    cb(new Error('Formato no válido. Solo se permiten archivos PDF.'), false);
   }
 };
 
-// 3. Empaquetar la configuración
-const upload = multer({ 
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 } // Límite de tamaño: 5MB máximo por archivo
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 },
 });
 
 export default upload;
